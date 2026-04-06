@@ -1,5 +1,5 @@
 /**
- * WA Web Sidebar Toggle — content.js
+ * WA Web Sidebar Toggle — content.js  v2.0
  *
  * Strategy:
  *   1. Wait for WhatsApp Web to finish loading (the navbar and sidebar panel).
@@ -13,263 +13,294 @@
 (function () {
   "use strict";
 
-  /* ─────────────────────────── Constants ─────────────────────────── */
+  /* ── IDs & keys ─────────────────────────────────────────────────── */
+  const EXT = "wa-sidebar-toggle";
+  const BTN_ID = `${EXT}-btn`;
+  const KEY = `${EXT}-hidden`;
+  const HTML_CLS = `${EXT}-hidden`; // added to <html> when sidebar is hidden
 
-  const EXTENSION_ID = "wa-sidebar-toggle";
-  const BTN_ID = `${EXTENSION_ID}-btn`;
-  const STORAGE_KEY = `${EXTENSION_ID}-hidden`;
-  const HIDDEN_CLASS = `${EXTENSION_ID}-sidebar-hidden`;
+  /* ── Selectors ──────────────────────────────────────────────────── */
+  // The Chats button — our most reliable anchor point.
+  const SEL_CHATS_BTN = '[data-navbar-item-index="0"]';
 
-  /* Selectors derived from the provided DOM snapshot */
-  const SELECTORS = {
-    /* The left column that contains the header + chat list */
-    sidebar: '[class*="_aigw"][class*="_as6h"]',
-    /* Fallback: the pane identified by id */
-    sidePane: "#side",
-    /* The vertical navbar on the far left (Chats, Status, Channels…) */
-    navbar:
-      '[class*="x1c4vz4f"][class*="xs83m0k"][class*="xdl72j9"][class*="x1g77sc7"]',
-    /* The first button in the navbar (Chats) — we inject ABOVE this */
-    firstNavBtn: '[data-navbar-item="true"][data-navbar-item-index="0"]',
-    /* The right-side chat/main panel */
-    mainPanel: "#main",
-  };
+  // The sidebar panel: element that directly contains #side.
+  const SEL_SIDE = "#side";
 
-  /* ─────────────────────────── Helpers ───────────────────────────── */
+  /* ── State ──────────────────────────────────────────────────────── */
+  let retryTimer = null;
 
-  const log = (...args) => console.log(`[${EXTENSION_ID}]`, ...args);
+  /* ── Helpers ────────────────────────────────────────────────────── */
+  const log = (...a) => console.log(`[${EXT}]`, ...a);
 
-  function isSidebarHidden() {
-    return sessionStorage.getItem(STORAGE_KEY) === "true";
-  }
+  const isHidden = () => sessionStorage.getItem(KEY) === "true";
+  const setHidden = (v) => sessionStorage.setItem(KEY, String(v));
 
-  function setSidebarHidden(val) {
-    sessionStorage.setItem(STORAGE_KEY, String(val));
+  /**
+   * Find the nav items column — the direct parent of the Chats button's
+   * wrapping <span>.  From the real DOM:
+   *   column-div > span > button[data-navbar-item-index="0"]
+   * so: button → parentElement(span) → parentElement(column-div)
+   */
+  function findNavColumn() {
+    const chatsBtn = document.querySelector(SEL_CHATS_BTN);
+    if (!chatsBtn) return null;
+    return chatsBtn.parentElement?.parentElement ?? null;
   }
 
   /**
-   * Robustly find an element with a compound class-substring query.
-   * WhatsApp uses hashed class names but they tend to be stable per build.
+   * Find the sidebar panel element to collapse.
+   * #side's parent is the full left column including WA's own header.
+   * If the parent looks wrong, fall back to #side itself.
    */
-  function findSidebar() {
-    /* Try the compound selector first */
-    const el = document.querySelector(SELECTORS.sidebar);
-    if (el) return el;
-    /* Fallback: find the element that contains #side */
-    const pane = document.querySelector(SELECTORS.sidePane);
-    return pane ? pane.closest("[class]") : null;
+  function findSidebarPanel() {
+    const side = document.querySelector(SEL_SIDE);
+    if (!side) return null;
+    const parent = side.parentElement;
+    if (
+      !parent ||
+      parent === document.body ||
+      parent === document.documentElement
+    ) {
+      return side;
+    }
+    return parent;
   }
 
-  function findNavContainer() {
-    const firstBtn = document.querySelector(SELECTORS.firstNavBtn);
-    if (!firstBtn) return null;
-
-    // span → div (item wrapper) → div (nav list container)
-    return firstBtn.parentElement?.parentElement?.parentElement;
+  /* ── SVG icons ──────────────────────────────────────────────────── */
+  /**
+   * Panel-split icon.
+   *   hidden=false  → left panel visible
+   *   hidden=true   → left panel gone
+   */
+  function iconSVG(hidden) {
+    return `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      ${
+        hidden
+          ? `<path d="M7 8v8" />`
+          : `<rect x="6.5" y="7.5" width="4" height="9" rx=".5" fill="black" stroke="black" />`
+      }
+      <rect x="3" y="4" width="18" height="16" rx="2.186" />
+    </svg>`;
   }
 
-  /* ─────────────────────────── Toggle Logic ──────────────────────── */
+  function buildButtonWrapper() {
+    // 1. The outermost container div (The "Slot")
+    const slot = document.createElement("div");
+    slot.className =
+      "x1c4vz4f xs83m0k xdl72j9 x1g77sc7 x78zum5 xozqiw3 x1oa3qoh x12fk4p8 xeuugli x2lwn1j x1nhvcw1 x1q0g3np x1cy8zhl x100vrsf x1vqgdyp xhslqc4 x1ekkm8c x1143rjc xum4auv xj21bgg x1277o0a x13i9f1t xr9ek0c xjpr12u";
 
-  function applySidebarState(hidden, animate = true) {
-    const sidebar = findSidebar();
-    if (!sidebar) return;
+    // 2. The Span wrapper (Standard WA wrapper)
+    const span = document.createElement("span");
+    span.className =
+      "html-span xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x1hl2dhg x16tdsg8 x1vvkbs x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j";
 
-    document.documentElement.classList.toggle(HIDDEN_CLASS, hidden);
+    // 3. The Button
+    const btn = document.createElement("button");
+    btn.id = BTN_ID;
+    btn.type = "button";
+    btn.setAttribute("tabindex", "0");
+    btn.setAttribute("data-navbar-item", "true");
+    btn.setAttribute("data-navbar-item-index", "0");
+    btn.className =
+      "xjb2p0i xk390pu x1heor9g x1ypdohk xjbqb8w x972fbf x10w94by x1qhh985 x14e42zd xtnn1bt x9v5kkp xmw7ebm xrdum7p xt8t1vi x1xc408v x129tdwq x15urzxu xh8yej3 x1y1aw1k xf159sx xwib8y2 xmzvs34";
+
+    // 4. Inner Structure
+    btn.innerHTML = `
+    <div class="x1c4vz4f xs83m0k xdl72j9 x1g77sc7 x78zum5 xozqiw3 x1oa3qoh x12fk4p8 xeuugli x2lwn1j x1nhvcw1 x1q0g3np x6s0dn4 xh8yej3 x1n2onr6">
+      <div style="flex-grow: 1;">
+        <div>
+          <span aria-hidden="true" class="${EXT}-icon">
+            ${iconSVG(isHidden())}
+          </span>
+        </div>
+      </div>
+    </div>`;
+
+    btn.addEventListener("click", onToggleClick);
+
+    span.appendChild(btn);
+    slot.appendChild(span);
+
+    // 5. Create HR element
+    const hr = document.createElement("hr");
+    hr.className =
+      "xh8yej3 xjm9jq1 x178xt8z x13fuv20 xx42vgk x18oe1m7 x1sy0etr xstzfhl";
+
+    // 6. Wrap both slot and hr in a fragment or container
+    const container = document.createDocumentFragment();
+    container.appendChild(slot);
+    container.appendChild(hr);
+
+    return container;
+  }
+
+  /* ── Toggle ─────────────────────────────────────────────────────── */
+  function onToggleClick() {
+    const next = !isHidden();
+    setHidden(next);
+    applySidebarState(next, true);
+  }
+
+  /**
+   * Core show / hide.
+   *
+   * We collapse the sidebar panel (parent of #side) by animating its width
+   * to zero in two phases: fade → then collapse.  The CSS rule in content.css
+   * makes #main fill the freed space via flex.
+   */
+  function applySidebarState(hidden, animate) {
+    const panel = findSidebarPanel();
+    if (!panel) {
+      log("sidebar panel not found");
+      return;
+    }
+
+    const EASE = "cubic-bezier(0.4,0,0.2,1)";
 
     if (hidden) {
-      if (animate) {
-        sidebar.style.transition =
-          "opacity 200ms ease, transform 200ms ease, width 280ms cubic-bezier(0.4,0,0.2,1)";
-      }
-      sidebar.style.opacity = "0";
-      sidebar.style.pointerEvents = "none";
-      sidebar.style.overflow = "hidden";
+      // Phase 1 – fade out
+      panel.style.transition = animate ? `opacity 150ms ease` : "none";
+      panel.style.opacity = "0";
+      panel.style.pointerEvents = "none";
 
-      /* After the opacity fades, collapse the width */
+      // Phase 2 – collapse width (after fade)
       setTimeout(
         () => {
-          sidebar.style.transition = animate
-            ? "width 280ms cubic-bezier(0.4,0,0.2,1), min-width 280ms cubic-bezier(0.4,0,0.2,1)"
+          panel.style.transition = animate
+            ? `width 260ms ${EASE}, min-width 260ms ${EASE}, max-width 260ms ${EASE}`
             : "none";
-          sidebar.style.width = "0";
-          sidebar.style.minWidth = "0";
-          sidebar.style.maxWidth = "0";
-          sidebar.style.flexBasis = "0";
+          panel.style.overflow = "hidden";
+          panel.style.width = "0";
+          panel.style.minWidth = "0";
+          panel.style.maxWidth = "0";
+
+          // Tell CSS to expand #main
+          document.documentElement.classList.add(HTML_CLS);
+
+          // Clean up transition property after animation completes
+          setTimeout(() => {
+            panel.style.transition = "";
+          }, 280);
         },
-        animate ? 180 : 0,
+        animate ? 155 : 0,
       );
     } else {
-      sidebar.style.transition = animate
-        ? "width 280ms cubic-bezier(0.4,0,0.2,1), min-width 280ms cubic-bezier(0.4,0,0.2,1), opacity 220ms ease"
+      // Expand width first, then fade in
+      document.documentElement.classList.remove(HTML_CLS);
+
+      panel.style.transition = animate
+        ? `width 260ms ${EASE}, min-width 260ms ${EASE}, max-width 260ms ${EASE}`
         : "none";
-      sidebar.style.width = "";
-      sidebar.style.minWidth = "";
-      sidebar.style.maxWidth = "";
-      sidebar.style.flexBasis = "";
-      sidebar.style.pointerEvents = "";
-      sidebar.style.overflow = "";
+      panel.style.width = "";
+      panel.style.minWidth = "";
+      panel.style.maxWidth = "";
+      panel.style.overflow = "";
 
       setTimeout(
         () => {
-          sidebar.style.opacity = "1";
+          panel.style.transition = animate ? `opacity 200ms ease` : "none";
+          panel.style.opacity = "1";
+          panel.style.pointerEvents = "";
+
+          setTimeout(() => {
+            panel.style.transition = "";
+          }, 220);
         },
         animate ? 240 : 0,
       );
     }
 
-    updateButton(hidden);
+    refreshButton(hidden);
   }
 
-  function toggleSidebar() {
-    const newHidden = !isSidebarHidden();
-    setSidebarHidden(newHidden);
-    applySidebarState(newHidden, true);
-  }
-
-  /* ─────────────────────────── Button ────────────────────────────── */
-
-  function createToggleButton() {
-    const originalBtn = document.querySelector(SELECTORS.firstNavBtn);
-    if (!originalBtn) return null;
-
-    // Clone the WHOLE wrapper (span → button → inner UI)
-    const wrapper = originalBtn.closest("span")?.cloneNode(true);
-    if (!wrapper) return null;
-
-    const btn = wrapper.querySelector("button");
-
-    // Unique ID
-    btn.id = BTN_ID;
-
-    // Accessibility
-    btn.setAttribute("aria-label", "Toggle sidebar");
-    btn.setAttribute("title", "Toggle sidebar");
-    btn.setAttribute("aria-pressed", String(isSidebarHidden()));
-    btn.setAttribute("data-navbar-item", "true");
-
-    // Remove WhatsApp-specific selection state
-    btn.removeAttribute("data-navbar-item-selected");
-    btn.removeAttribute("data-navbar-item-index");
-
-    // Replace icon
-    const iconContainer = btn.querySelector("[data-icon]");
-    if (iconContainer) {
-      iconContainer.innerHTML = buildSVG(isSidebarHidden());
-      iconContainer.removeAttribute("data-icon");
-    }
-
-    // Remove unread badge (important)
-    const badge = btn.querySelector("[aria-label]");
-    if (badge && badge !== btn) {
-      badge.remove();
-    }
-
-    // Fix tabindex (WhatsApp uses -1, but we want keyboard access)
-    btn.setAttribute("tabindex", "0");
-
-    // Click + keyboard
-    btn.onclick = toggleSidebar;
-    btn.onkeydown = (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        toggleSidebar();
-      }
-    };
-
-    return wrapper;
-  }
-
-  function buildSVG(isHidden) {
-    /* Two-panel icon: when visible show "collapse left", when hidden show "expand right" */
-    if (isHidden) {
-      /* Expand / show sidebar icon */
-      return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false">
-        <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6" fill="none"/>
-        <line x1="9" y1="4" x2="9" y2="20" stroke="currentColor" stroke-width="1.6"/>
-        <polyline points="5.5,10 7.5,12 5.5,14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      </svg>`;
-    } else {
-      /* Collapse / hide sidebar icon */
-      return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false">
-        <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6" fill="none"/>
-        <line x1="9" y1="4" x2="9" y2="20" stroke="currentColor" stroke-width="1.6"/>
-        <polyline points="7.5,10 5.5,12 7.5,14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      </svg>`;
-    }
-  }
-
-  function updateButton(isHidden) {
+  /* ── Button state sync ──────────────────────────────────────────── */
+  function refreshButton(hidden) {
     const btn = document.getElementById(BTN_ID);
     if (!btn) return;
 
-    btn.setAttribute("aria-pressed", String(isHidden));
-    btn.setAttribute("title", isHidden ? "Show sidebar" : "Hide sidebar");
-    btn.setAttribute("aria-label", isHidden ? "Show sidebar" : "Hide sidebar");
+    // Update ARIA and Titles
+    const label = hidden ? "Show sidebar" : "Hide sidebar";
+    btn.setAttribute("aria-pressed", String(hidden));
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("title", label);
 
-    const iconContainer = btn.querySelector("svg")?.parentElement;
-    if (iconContainer) {
-      iconContainer.innerHTML = buildSVG(isHidden);
+    // Update the Icon
+    const iconSpan = btn.querySelector(`.${EXT}-icon`);
+    if (iconSpan) iconSpan.innerHTML = iconSVG(hidden);
+
+    // Match the "Selected" background highlight
+    // The slot (outermost div) gets the highlight class in WA
+    const slot = btn.closest(".x1c4vz4f");
+    if (slot) {
+      if (hidden) {
+        slot.classList.add("x14ug900", "xzs022t");
+        btn.setAttribute("data-navbar-item-selected", "true");
+      } else {
+        slot.classList.remove("x14ug900", "xzs022t");
+        btn.setAttribute("data-navbar-item-selected", "false");
+      }
     }
   }
 
-  /* ─────────────────────────── Injection ─────────────────────────── */
+  /* ── Injection ──────────────────────────────────────────────────── */
+  function inject() {
+    if (document.getElementById(BTN_ID)) return true;
 
-  function injectButton() {
-    if (document.getElementById(BTN_ID)) return;
+    const chatsBtn = document.querySelector(SEL_CHATS_BTN);
+    if (!chatsBtn) {
+      log("Chats button not ready");
+      return false;
+    }
 
-    const container = findNavContainer();
-    if (!container) return false;
+    const wrapper = buildButtonWrapper();
 
-    const btn = createToggleButton();
-    if (!btn) return false;
+    // Chats button's closest parent that wraps nav items
+    const navItemWrapper = chatsBtn.closest('div[class*="x1c4vz4f"]');
+    if (navItemWrapper && navItemWrapper.parentElement) {
+      navItemWrapper.parentElement.insertBefore(wrapper, navItemWrapper);
+      log("button injected ✓");
+    } else {
+      log("cannot find proper parent to insert button");
+      return false;
+    }
 
-    // Insert as FIRST nav item
-    container.insertBefore(btn, container.firstElementChild);
+    // Restore persisted state without animation on first load
+    if (isHidden()) applySidebarState(true, false);
 
-    log("Toggle button injected.");
     return true;
   }
 
-  /* ─────────────────────────── Initialisation ────────────────────── */
-
-  function init() {
-    if (injectButton()) {
-      /* Restore persisted state without animation on first load */
-      if (isSidebarHidden()) {
-        applySidebarState(true, false);
-      }
-    }
-  }
-
-  /**
-   * WhatsApp Web is a SPA. We use a MutationObserver to detect when the
-   * navbar is rendered or replaced, then re-inject our button.
-   */
-  let retryTimer = null;
-
-  function scheduleRetry(ms = 800) {
-    clearTimeout(retryTimer);
-    retryTimer = setTimeout(() => {
-      if (!document.getElementById(BTN_ID)) {
-        log("Retrying injection…");
-        init();
-      }
-    }, ms);
-  }
-
+  /* ── MutationObserver + retry loop ─────────────────────────────── */
   const observer = new MutationObserver(() => {
-    const hasNavBtn = !!document.querySelector(SELECTORS.firstNavBtn);
-    const hasBtnAlready = !!document.getElementById(BTN_ID);
-
-    if (hasNavBtn && !hasBtnAlready) {
-      scheduleRetry(300);
+    if (
+      document.querySelector(SEL_CHATS_BTN) &&
+      !document.getElementById(BTN_ID)
+    ) {
+      scheduleRetry(250);
     }
   });
 
-  /* Start observing once the DOM is sufficiently ready */
+  function scheduleRetry(ms) {
+    clearTimeout(retryTimer);
+    retryTimer = setTimeout(() => {
+      if (!inject()) scheduleRetry(800);
+    }, ms);
+  }
+
   function start() {
     observer.observe(document.body, { childList: true, subtree: true });
-    scheduleRetry(1200);
+    scheduleRetry(1000);
   }
 
   if (document.readyState === "loading") {
@@ -278,12 +309,11 @@
     start();
   }
 
-  /* ─────────────────── Global keyboard shortcut ──────────────────── */
-  /* Alt + S (or Option + S on macOS) to toggle without mouse */
+  /* ── Keyboard shortcut: Alt+S ───────────────────────────────────── */
   document.addEventListener("keydown", (e) => {
-    if (e.altKey && e.key.toLowerCase() === "s" && !e.ctrlKey && !e.metaKey) {
+    if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === "s") {
       e.preventDefault();
-      toggleSidebar();
+      onToggleClick();
     }
   });
 })();
