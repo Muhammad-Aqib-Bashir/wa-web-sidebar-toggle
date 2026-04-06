@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "WA Web Sidebar Toggle",
-  "version": "1.0.0",
-  "description": "Instantly hide or show the WhatsApp Web chat sidebar for a distraction-free, full-screen chat experience.",
-  "permissions": [],
-  "host_permissions": [
-    "https://web.whatsapp.com/*"
-  ],
+  "version": "0.0.0",
+  "description": "Add a toggle button to WhatsApp Web to hide or show the chat/status/channels sidebar, giving you a distraction-free chat view.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://web.whatsapp.com/*"],
@@ -15,19 +16,6 @@
       "run_at": "document_idle"
     }
   ],
-  "icons": {
-    "16": "icons/icon16.png",
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-  "action": {
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    },
-    "default_title": "WA Web Sidebar Toggle"
-  }
+  "permissions": [],
+  "host_permissions": ["https://web.whatsapp.com/*"]
 }
