@@ -135,6 +135,7 @@
       const span = document.createElement("span");
       span.className =
         "html-span xdj266r x14z9mp xat24cr x1lziwak xexx8yu xyri2b x18d9i69 x1c1uobl x1hl2dhg x16tdsg8 x1vvkbs x4k7w5x x1h91t0o x1h9r5lt x1jfb8zj xv2umb2 x1beo9mf xaigb6o x12ejxvf x3igimt xarpa2k xedcshv x1lytzrv x1t2pt76 x7ja8zs x1qrby5j";
+      span.id = `${CONFIG.BTN_ID}-wrapper-span`;
 
       // 3. The Button
       const btn = document.createElement("button");
@@ -142,7 +143,7 @@
       btn.type = "button";
       btn.setAttribute("tabindex", "0");
       btn.setAttribute("data-navbar-item", "true");
-      btn.setAttribute("aria-label", "Toggle sidebar");
+      btn.setAttribute("aria-label", "Toggle Sidebar");
       btn.className =
         "xjb2p0i xk390pu x1heor9g x1ypdohk xjbqb8w x972fbf x10w94by x1qhh985 x14e42zd xtnn1bt x9v5kkp xmw7ebm xrdum7p xt8t1vi x1xc408v x129tdwq x15urzxu xh8yej3 x1y1aw1k xf159sx xwib8y2 xmzvs34";
 
@@ -234,18 +235,31 @@
     return true;
   }
 
+  /* ──────────────────────────────────────────────
+   * INITIALIZATION & OBSERVERS
+   * ────────────────────────────────────────────── */
   function init() {
-    // 1. Watch for Nav Clicks: If sidebar is hidden and a nav item is clicked, show sidebar
+    // 1. Watch for Nav Clicks
     document.addEventListener(
       "click",
       (e) => {
         const navBtn = e.target.closest(CONFIG.SELECTORS.navButtons);
-        // Ensure we didn't just click our own toggle button
+
+        // Ensure it's a nav button and not our own toggle
         if (navBtn && navBtn.id !== CONFIG.BTN_ID) {
-          Sidebar.show();
+          // Get the name from aria-label (e.g., "Chats", "Status", "Media")
+          const navName = navBtn.getAttribute("aria-label") || "Unknown";
+
+          // LOGGING LOGIC: Log everything except "Media"
+          if (navName !== "Media") {
+            console.log(`[nav (${navName})] clicked`);
+
+            // Auto-show sidebar on nav click
+            Sidebar.show();
+          }
         }
       },
-      true,
+      true, // Use capture phase to ensure we catch the click before WA's internal handlers
     );
 
     // 2. Watch for DOM changes (WhatsApp is a SPA)

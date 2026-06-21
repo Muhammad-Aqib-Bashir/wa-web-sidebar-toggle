@@ -1,0 +1,40 @@
+#wa-web-sidebar-toggle-btn {
+  position: relative;
+  z-index: 1000000;
+}
+
+/* Tooltip */
+#wa-web-sidebar-toggle-btn::after {
+  content: "Toggle Sidebar";
+  position: relative;
+
+  left: calc(100% + 4px);
+  transform: translateY(-50%);
+
+  background: rgba(20, 20, 20, 0.95);
+  color: #fff;
+
+  padding: 6px 10px;
+  border-radius: 4px;
+
+  font-size: 12px;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.05s ease;
+  z-index: 999999;
+}
+
+/* Show on hover */
+#wa-web-sidebar-toggle-btn:hover::after {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  #wa-web-sidebar-toggle-btn::after {
+    color: rgba(20, 20, 20, 0.95);
+    background: #fff;
+  }
+}
