@@ -11,10 +11,45 @@
     BTN_ID: `${EXT}-btn`,
     STORAGE_KEY: `${EXT}-hidden`,
     HTML_CLASS: `${EXT}-hidden`,
+    NAVBAR_CLASS: `${EXT}-navbar`,
+    COLLAPSED_CLASS: `${EXT}-collapsed`,
+    EASE: "cubic-bezier(0.4, 0, 0.2, 1)",
+    COLLAPSE_MS: 400,
+    CONTENT_FADE_DELAY_MS: 300,
+    CONTENT_FADE_MS: 300,
+    SYNC_INTERVAL_MS: 1500,
     SELECTORS: {
-      sidebar: "#side",
+      // WhatsApp wraps every top-level layout slot (nav rail, side panel,
+      // main area) in this same generic flex-item class. We can't target
+      // the side panel by id, because the *content* node's id/structure
+      // changes depending on which tab is open (Chats/Status/Communities/
+      // Settings) - but every one of these layout slots shares this class,
+      // so instead we collapse all of them EXCEPT the nav rail. That makes
+      // the toggle work identically no matter what's currently shown.
+      container: "x18dvir5",
       navButtons: 'button[data-navbar-item="true"]',
+      navHeader: "header[data-tab]",
       chatsBtn: 'button[aria-label="Chats"]',
+      // Fallback list for the actual scrollable list/content node, tried in
+      // order. Only used for an extra crisp opacity fade once the layout
+      // slot around it has already been collapsed to zero width.
+      content: [
+        "#side",
+        "#pane-side",
+        '[data-testid="chatlist"]',
+        '[data-testid="chatlist-container"]',
+        'div[role="complementary"]',
+      ],
+      navLabels: [
+        "Chats",
+        "Status",
+        "Communities",
+        "Comunidades",
+        "Channels",
+        "Canales",
+        "Settings",
+        "Profile",
+      ],
     },
   };
 
@@ -30,20 +65,89 @@
     set isHidden(val) {
       sessionStorage.setItem(CONFIG.STORAGE_KEY, String(val));
     },
+    contentFadeTimer: null,
   };
 
   /* ──────────────────────────────────────────────
    * DOM SELECTORS
    * ────────────────────────────────────────────── */
   const DOM = {
-    getSidebarPanel() {
-      const side = document.querySelector(CONFIG.SELECTORS.sidebar);
-      if (!side) return null;
-      // Target the x18dvir5 container typically wrapping the sidebar
-      return side.closest(".x18dvir5") || side.parentElement || side;
-    },
     getToggleButton() {
       return document.getElementById(CONFIG.BTN_ID);
+    },
+
+    getAllContainers() {
+      return Array.from(
+        document.querySelectorAll(`.${CONFIG.SELECTORS.container}`),
+      );
+    },
+
+    // The actual scrollable list (chat list / status list / communities
+    // list / settings panel). Only used for an extra-crisp fade once the
+    // layout slot around it has already been collapsed to zero width.
+    findContent() {
+      for (const sel of CONFIG.SELECTORS.content) {
+        const el = document.querySelector(sel);
+        if (el) return el;
+      }
+      return null;
+    },
+
+    // Decides whether a given .x18dvir5 wrapper is the narrow navigation
+    // rail (Chats/Status/Communities/Settings/Profile icons), so we never
+    // collapse it by mistake. Several independent signals are checked
+    // because WhatsApp's auto-generated class names aren't stable across
+    // releases - any one of them being true is enough.
+    isNavRail(container) {
+      const navHeader = container.querySelector(CONFIG.SELECTORS.navHeader);
+      const navButtons = container.querySelectorAll(
+        CONFIG.SELECTORS.navButtons,
+      );
+
+      // A header with multiple nav buttons is unambiguously the rail.
+      if (navHeader && navButtons.length >= 2) return true;
+
+      // Our own toggle button only ever lives inside the rail.
+      if (
+        container.querySelector(`#${CONFIG.BTN_ID}`) &&
+        (navHeader || navButtons.length >= 2)
+      ) {
+        return true;
+      }
+
+      // 4+ nav-item buttons directly inside = definitely the rail.
+      if (navButtons.length >= 4) return true;
+
+      // 4+ of the known nav aria-labels present = definitely the rail.
+      const labelMatches = CONFIG.SELECTORS.navLabels.filter((label) =>
+        container.querySelector(`button[aria-label="${label}"]`),
+      ).length;
+      if (labelMatches >= 4) return true;
+
+      // The rail is narrow (vertical icon strip); a narrow container that
+      // also looks nav-ish is almost certainly it.
+      const width = container.getBoundingClientRect().width;
+      if (width > 0 && width < 150 && (navHeader || navButtons.length >= 3)) {
+        return true;
+      }
+
+      return false;
+    },
+
+    // Tags every layout slot so it's cheap to tell nav rail apart from
+    // collapsible panels on screen (useful for debugging), and returns the
+    // set that should actually be collapsed.
+    getCollapsibleContainers() {
+      const collapsible = [];
+      for (const container of this.getAllContainers()) {
+        if (this.isNavRail(container)) {
+          container.classList.add(CONFIG.NAVBAR_CLASS);
+        } else {
+          container.classList.remove(CONFIG.NAVBAR_CLASS);
+          collapsible.push(container);
+        }
+      }
+      return collapsible;
     },
   };
 
@@ -66,7 +170,7 @@
       ${
         hidden
           ? `<path d="M7 8v8" />`
-          : `<rect x="7" y="8" width="4" height="8" rx="0.5" fill="black" stroke="black" />`
+          : `<rect x="6.5" y="7.5" width="4" height="9" rx=".5" fill="black" stroke="black" />`
       }
       <rect x="3" y="4" width="18" height="16" rx="2.186" />
     </svg>`;
@@ -85,39 +189,96 @@
     },
 
     apply(hide, animate) {
-      const panel = DOM.getSidebarPanel();
-      if (!panel) return;
-
       State.isHidden = hide;
-      const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+      this._render(hide, animate);
+      document.documentElement.classList.toggle(CONFIG.HTML_CLASS, hide);
+      UI.updateButtonState(hide);
+    },
 
-      if (hide) {
-        // Hiding logic
-        panel.style.transition = animate
-          ? `opacity 150ms ease, width 260ms ${EASE}`
-          : "none";
-        panel.style.opacity = "0";
-        panel.style.width = "0";
-        panel.style.minWidth = "0";
-        panel.style.maxWidth = "0";
-        panel.style.overflow = "hidden";
-        panel.style.pointerEvents = "none";
-        document.documentElement.classList.add(CONFIG.HTML_CLASS);
-      } else {
-        // Showing logic
-        document.documentElement.classList.remove(CONFIG.HTML_CLASS);
-        panel.style.transition = animate
-          ? `width 260ms ${EASE}, opacity 200ms ease`
-          : "none";
-        panel.style.width = "";
-        panel.style.minWidth = "";
-        panel.style.maxWidth = "";
-        panel.style.opacity = "1";
-        panel.style.overflow = "";
-        panel.style.pointerEvents = "";
+    // Re-applies the current state to whatever's in the DOM right now.
+    // Safe to call repeatedly - WhatsApp's SPA rebuilds these wrapper nodes
+    // whenever a tab is switched (Chats/Status/Communities/Settings) or the
+    // view otherwise re-renders, which would silently drop our collapsed
+    // styling. This is what keeps the toggle glued in place instead of
+    // popping back open. Called from the mutation observer / sync timer.
+    reassert() {
+      this._render(State.isHidden, false);
+    },
+
+    _render(hide, animate) {
+      const containers = DOM.getCollapsibleContainers();
+      const content = DOM.findContent();
+
+      if (State.contentFadeTimer) {
+        clearTimeout(State.contentFadeTimer);
+        State.contentFadeTimer = null;
       }
 
-      UI.updateButtonState(hide);
+      if (containers.length === 0) {
+        // Structural slots not found (very early load) - fall back to
+        // hiding the content node directly so the toggle still does
+        // *something* useful.
+        if (content) content.style.display = hide ? "none" : "";
+        return;
+      }
+
+      const transition = animate
+        ? `flex ${CONFIG.COLLAPSE_MS}ms ${CONFIG.EASE}, width ${CONFIG.COLLAPSE_MS}ms ${CONFIG.EASE}, min-width ${CONFIG.COLLAPSE_MS}ms ${CONFIG.EASE}, max-width ${CONFIG.COLLAPSE_MS}ms ${CONFIG.EASE}`
+        : "none";
+
+      if (hide) {
+        containers.forEach((container) => {
+          container.style.transition = transition;
+          if (animate) void container.offsetWidth; // force reflow so the transition actually plays
+          container.classList.add(CONFIG.COLLAPSED_CLASS);
+          container.style.flex = "0 0 0%";
+          container.style.width = "0";
+          container.style.minWidth = "0";
+          container.style.maxWidth = "0";
+        });
+
+        const fadeContent = () => {
+          if (!State.isHidden) return; // toggled back before the delay fired
+          const el = DOM.findContent();
+          if (!el) return;
+          el.style.transition = `opacity ${CONFIG.CONTENT_FADE_MS}ms ease, visibility ${CONFIG.CONTENT_FADE_MS}ms ease`;
+          el.style.opacity = "0";
+          el.style.visibility = "hidden";
+          el.style.pointerEvents = "none";
+        };
+
+        if (animate) {
+          State.contentFadeTimer = setTimeout(
+            fadeContent,
+            CONFIG.CONTENT_FADE_DELAY_MS,
+          );
+        } else {
+          fadeContent();
+        }
+      } else {
+        if (content) {
+          Object.assign(content.style, {
+            opacity: "",
+            visibility: "",
+            pointerEvents: "",
+            display: "",
+          });
+        }
+
+        const restore = () => {
+          containers.forEach((container) => {
+            container.style.transition = transition;
+            container.classList.remove(CONFIG.COLLAPSED_CLASS);
+            container.style.flex = "";
+            container.style.width = "";
+            container.style.minWidth = "";
+            container.style.maxWidth = "";
+          });
+        };
+
+        if (animate) requestAnimationFrame(restore);
+        else restore();
+      }
     },
   };
 
@@ -235,38 +396,32 @@
     return true;
   }
 
-  /* ──────────────────────────────────────────────
-   * INITIALIZATION & OBSERVERS
-   * ────────────────────────────────────────────── */
   function init() {
-    // 1. Watch for Nav Clicks
-    document.addEventListener(
-      "click",
-      (e) => {
-        const navBtn = e.target.closest(CONFIG.SELECTORS.navButtons);
+    // WhatsApp is a SPA: switching tabs (Chats/Status/Communities/
+    // Settings), opening a chat, or even just receiving a message mutates
+    // the DOM - sometimes rebuilding the panel wrapper nodes entirely. We
+    // re-sync after every burst of mutations (batched into one rAF tick so
+    // this stays cheap even though WhatsApp mutates constantly), plus a
+    // slow interval as a safety net in case a mutation is ever missed.
+    let frame = null;
+    const sync = () => {
+      inject();
+      Sidebar.reassert();
+    };
+    const scheduleSync = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = null;
+        sync();
+      });
+    };
 
-        // Ensure it's a nav button and not our own toggle
-        if (navBtn && navBtn.id !== CONFIG.BTN_ID) {
-          // Get the name from aria-label (e.g., "Chats", "Status", "Media")
-          const navName = navBtn.getAttribute("aria-label") || "Unknown";
-
-          // LOGGING LOGIC: Log everything except "Media"
-          if (navName !== "Media") {
-            console.log(`[nav (${navName})] clicked`);
-
-            // Auto-show sidebar on nav click
-            Sidebar.show();
-          }
-        }
-      },
-      true, // Use capture phase to ensure we catch the click before WA's internal handlers
-    );
-
-    // 2. Watch for DOM changes (WhatsApp is a SPA)
-    const observer = new MutationObserver(() => inject());
+    const observer = new MutationObserver(scheduleSync);
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // 3. Keyboard Shortcut (Alt + S)
+    setInterval(sync, CONFIG.SYNC_INTERVAL_MS);
+
+    // Keyboard Shortcut (Alt + S)
     document.addEventListener("keydown", (e) => {
       if (e.altKey && e.key.toLowerCase() === "s") {
         e.preventDefault();
