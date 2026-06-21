@@ -315,6 +315,44 @@
   };
 
   /* ──────────────────────────────────────────────
+   * TOOLTIP
+   * ────────────────────────────────────────────── */
+  // A CSS `position: relative/absolute` tooltip anchored on the button gets
+  // cropped by the header it lives in - `.x1n2onr6` (one of the header's
+  // classes) sets `position: relative` on the header itself, which clips
+  // any descendant content to the header's own box. Increasing z-index
+  // doesn't help because the *box* is being cut, not just painted under
+  // something. The fix is to stop being a descendant of that header at
+  // all: the tooltip is appended straight to <body> and positioned with
+  // `position: fixed`, computed from the button's live on-screen rect.
+  const Tooltip = {
+    el: null,
+
+    ensure() {
+      if (this.el) return this.el;
+      const el = document.createElement("div");
+      el.className = `${CONFIG.EXT}-tooltip`;
+      el.setAttribute("role", "tooltip");
+      document.body.appendChild(el);
+      this.el = el;
+      return el;
+    },
+
+    show(target, text) {
+      const el = this.ensure();
+      el.textContent = text;
+      const rect = target.getBoundingClientRect();
+      el.style.left = `${rect.right + 8}px`;
+      el.style.top = `${rect.top + rect.height / 2}px`;
+      el.classList.add("is-visible");
+    },
+
+    hide() {
+      if (this.el) this.el.classList.remove("is-visible");
+    },
+  };
+
+  /* ──────────────────────────────────────────────
    * UI CONSTRUCTION
    * ────────────────────────────────────────────── */
   const UI = {
@@ -356,6 +394,13 @@
         e.stopPropagation();
         Sidebar.toggle();
       });
+
+      btn.addEventListener("mouseenter", () =>
+        Tooltip.show(btn, "Toggle Sidebar"),
+      );
+      btn.addEventListener("mouseleave", () => Tooltip.hide());
+      btn.addEventListener("focus", () => Tooltip.show(btn, "Toggle Sidebar"));
+      btn.addEventListener("blur", () => Tooltip.hide());
 
       span.appendChild(btn);
       slot.appendChild(span);
@@ -496,6 +541,7 @@
       inject();
       Sidebar.reassert();
       ShortcutsModal.inject();
+      if (!DOM.getToggleButton()) Tooltip.hide();
     };
     const scheduleSync = () => {
       if (frame) return;

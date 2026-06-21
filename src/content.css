@@ -1,14 +1,15 @@
 #wa-web-sidebar-toggle-btn {
   position: relative;
-  z-index: 1000000;
 }
 
-/* Tooltip */
-#wa-web-sidebar-toggle-btn::after {
-  content: "Toggle Sidebar";
-  position: relative;
+/* Tooltip — rendered as a sibling of <body>, not a descendant of the
+   button's header, so it can't be clipped by the header's own positioning
+   context. Positioned in JS via getBoundingClientRect(); this file only
+   handles its appearance. */
+.wa-web-sidebar-toggle-tooltip {
+  position: fixed;
+  z-index: 2147483647;
 
-  left: calc(100% + 4px);
   transform: translateY(-50%);
 
   background: rgba(20, 20, 20, 0.95);
@@ -24,16 +25,14 @@
   pointer-events: none;
 
   transition: opacity 0.05s ease;
-  z-index: 999999;
 }
 
-/* Show on hover */
-#wa-web-sidebar-toggle-btn:hover::after {
+.wa-web-sidebar-toggle-tooltip.is-visible {
   opacity: 1;
 }
 
 @media (prefers-color-scheme: dark) {
-  #wa-web-sidebar-toggle-btn::after {
+  .wa-web-sidebar-toggle-tooltip {
     color: rgba(20, 20, 20, 0.95);
     background: #fff;
   }
