@@ -195,7 +195,7 @@
       ${
         hidden
           ? `<path d="M7 8v8" />`
-          : `<rect x="6.5" y="7.5" width="4" height="9" rx=".5" fill="black" stroke="black" />`
+          : `<rect x="6.5" y="7.5" width="4" height="9" rx=".5" fill="black" stroke="black" class="wa-web-sidebar-toggle-icon-inner-rect" />`
       }
       <rect x="3" y="4" width="18" height="16" rx="2.186" />
     </svg>`;
@@ -342,7 +342,7 @@
       const el = this.ensure();
       el.textContent = text;
       const rect = target.getBoundingClientRect();
-      el.style.left = `${rect.right + 8}px`;
+      el.style.left = `${rect.right + 4}px`;
       el.style.top = `${rect.top + rect.height / 2}px`;
       el.classList.add("is-visible");
     },

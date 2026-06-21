@@ -2,10 +2,16 @@
   position: relative;
 }
 
-/* Tooltip — rendered as a sibling of <body>, not a descendant of the
-   button's header, so it can't be clipped by the header's own positioning
-   context. Positioned in JS via getBoundingClientRect(); this file only
-   handles its appearance. */
+.wa-web-sidebar-toggle-icon-inner-rect {
+  stroke: black;
+  fill: black;
+}
+
+body.dark .wa-web-sidebar-toggle-icon-inner-rect {
+  stroke: #fafafa;
+  fill: #fafafa;
+}
+
 .wa-web-sidebar-toggle-tooltip {
   position: fixed;
   z-index: 2147483647;
@@ -13,7 +19,7 @@
   transform: translateY(-50%);
 
   background: rgba(20, 20, 20, 0.95);
-  color: #fff;
+  color: #fafafa;
 
   padding: 6px 10px;
   border-radius: 4px;
@@ -31,9 +37,7 @@
   opacity: 1;
 }
 
-@media (prefers-color-scheme: dark) {
-  .wa-web-sidebar-toggle-tooltip {
-    color: rgba(20, 20, 20, 0.95);
-    background: #fff;
-  }
+body.dark .wa-web-sidebar-toggle-tooltip {
+  background: #fafafa;
+  color: rgba(20, 20, 20, 0.95);
 }
