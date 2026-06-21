@@ -13,6 +13,9 @@
     HTML_CLASS: `${EXT}-hidden`,
     NAVBAR_CLASS: `${EXT}-navbar`,
     COLLAPSED_CLASS: `${EXT}-collapsed`,
+    SHORTCUT_ROW_ID: `${EXT}-shortcut-row`,
+    SHORTCUT_LABEL: "Toggle sidebar",
+    SHORTCUT_KEYS: ["Alt", "S"],
     EASE: "cubic-bezier(0.4, 0, 0.2, 1)",
     COLLAPSE_MS: 400,
     CONTENT_FADE_DELAY_MS: 300,
@@ -31,7 +34,7 @@
       navHeader: "header[data-tab]",
       chatsBtn: 'button[aria-label="Chats"]',
       // Fallback list for the actual scrollable list/content node, tried in
-      // order. Only used for an extra crisp opacity fade once the layout
+      // order. Only used for an extra-crisp opacity fade once the layout
       // slot around it has already been collapsed to zero width.
       content: [
         "#side",
@@ -50,6 +53,18 @@
         "Settings",
         "Profile",
       ],
+      // Elements that sit *outside* the collapsible .x18dvir5 slots (e.g.
+      // sticky/independent header bars above the chat list) so collapsing
+      // the slot's width doesn't hide them on its own. Each entry is a CSS
+      // selector; every match is force-hidden alongside the panel. Add more
+      // selectors here if other tabs (Status/Communities/Settings) turn out
+      // to have their own stray headers too.
+      extraHide: [
+        ".x570efc.x9f619.x78zum5.x1okw0bk.x6s0dn4.x1peatla.x14ug900.x1280gxy.x889kno.x1a8lsjc.x106a9eq.x1xnnf8n",
+      ],
+      // The list inside WhatsApp's native "Keyboard shortcuts" modal that we
+      // append our own shortcut entry to.
+      shortcutsList: '[data-testid="popup-contents"] > div > div',
     },
   };
 
@@ -91,6 +106,16 @@
         if (el) return el;
       }
       return null;
+    },
+
+    // Stray elements (e.g. a header bar) that live outside the collapsible
+    // .x18dvir5 slots and so don't disappear just from those collapsing.
+    findExtraHideElements() {
+      const found = new Set();
+      CONFIG.SELECTORS.extraHide.forEach((sel) => {
+        document.querySelectorAll(sel).forEach((el) => found.add(el));
+      });
+      return Array.from(found);
     },
 
     // Decides whether a given .x18dvir5 wrapper is the narrow navigation
@@ -208,6 +233,13 @@
     _render(hide, animate) {
       const containers = DOM.getCollapsibleContainers();
       const content = DOM.findContent();
+      const extras = DOM.findExtraHideElements();
+
+      // Stray header bars etc. that don't live inside a collapsible slot -
+      // just hard display:none them, no animation needed for these.
+      extras.forEach((el) => {
+        el.style.display = hide ? "none" : "";
+      });
 
       if (State.contentFadeTimer) {
         clearTimeout(State.contentFadeTimer);
@@ -366,6 +398,61 @@
   };
 
   /* ──────────────────────────────────────────────
+   * KEYBOARD SHORTCUTS MODAL
+   * ────────────────────────────────────────────── */
+  // WhatsApp has its own native "Keyboard shortcuts" reference modal. This
+  // appends a row for our Alt+S shortcut to the top of that list, styled to
+  // match WhatsApp's own rows, whenever the modal is open.
+  const ShortcutsModal = {
+    buildRow() {
+      const row = document.createElement("div");
+      row.id = CONFIG.SHORTCUT_ROW_ID;
+      row.className =
+        "x78zum5 x1okw0bk x6s0dn4 x1nxh6w3 x1cjqih5 xq7czo8 x1jrle2z xszpbae x19eaz5n x1oyju9o x7d3g0m x1runjb5";
+
+      const label = document.createElement("div");
+      label.className = "x1iyjqo2 x1sa5p1d x6ikm8r x10wlt62 x1f6kntn x1m1tpaw";
+      label.textContent = CONFIG.SHORTCUT_LABEL;
+
+      const keysOuter = document.createElement("div");
+      keysOuter.className = "x1iyjqo2 xp4054r";
+
+      const keysInner = document.createElement("div");
+      keysInner.className =
+        "x1c4vz4f xs83m0k xdl72j9 x1g77sc7 x3nfvp2 xozqiw3 x1oa3qoh x12fk4p8 x1r0jzty x17zd0t2 xeuugli x2lwn1j x1nhvcw1 x1q0g3np x6s0dn4";
+
+      CONFIG.SHORTCUT_KEYS.forEach((key) => {
+        const keyCap = document.createElement("div");
+        keyCap.className =
+          "x1c4vz4f xs83m0k xdl72j9 x1g77sc7 xeuugli x2lwn1j x3nfvp2 xozqiw3 x1oa3qoh x12fk4p8 x1iorvi4 xf159sx xjkvuk6 xmzvs34 xmhyiyy x178xt8z x1lun4ml xso031l xpilrb4 x13fuv20 x18b5jzi x1q0q8m5 x1t7ytsu x1cienrf x1eproq3 x1ntcio7 x1dd54ck xrxyp3c xv0oops x1isl5vh xn8zj9a xx8lszd x14ug900 x1pg5gke";
+        keyCap.textContent = key;
+        keysInner.appendChild(keyCap);
+      });
+
+      keysOuter.appendChild(keysInner);
+      row.appendChild(label);
+      row.appendChild(keysOuter);
+      return row;
+    },
+
+    // Keeps watch for the shortcuts modal opening, and inserts our row as
+    // the first item in its list if it isn't already there. Since our row
+    // is part of the modal's own DOM subtree, it's naturally removed again
+    // when the user closes the modal - so it gets freshly re-inserted (and
+    // de-duplicated via the id check) every time the modal reopens.
+    inject() {
+      if (document.getElementById(CONFIG.SHORTCUT_ROW_ID)) return false;
+
+      const list = document.querySelector(CONFIG.SELECTORS.shortcutsList);
+      if (!list) return false;
+
+      list.insertBefore(this.buildRow(), list.firstElementChild || null);
+      log("shortcut row injected into shortcuts modal ✓");
+      return true;
+    },
+  };
+
+  /* ──────────────────────────────────────────────
    * INITIALIZATION & OBSERVERS
    * ────────────────────────────────────────────── */
   function inject() {
@@ -402,11 +489,13 @@
     // the DOM - sometimes rebuilding the panel wrapper nodes entirely. We
     // re-sync after every burst of mutations (batched into one rAF tick so
     // this stays cheap even though WhatsApp mutates constantly), plus a
-    // slow interval as a safety net in case a mutation is ever missed.
+    // slow interval as a safety net in case a mutation is ever missed. The
+    // same pass also watches for the keyboard-shortcuts modal opening.
     let frame = null;
     const sync = () => {
       inject();
       Sidebar.reassert();
+      ShortcutsModal.inject();
     };
     const scheduleSync = () => {
       if (frame) return;
