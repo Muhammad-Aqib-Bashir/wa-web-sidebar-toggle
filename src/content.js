@@ -66,7 +66,7 @@
       ${
         hidden
           ? `<path d="M7 8v8" />`
-          : `<rect x="6.5" y="7.5" width="4" height="9" rx=".5" fill="black" stroke="black" />`
+          : `<rect x="7" y="8" width="4" height="8" rx="0.5" fill="black" stroke="black" />`
       }
       <rect x="3" y="4" width="18" height="16" rx="2.186" />
     </svg>`;
