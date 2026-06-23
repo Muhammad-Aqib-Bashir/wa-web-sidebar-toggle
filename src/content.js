@@ -64,7 +64,8 @@
       ],
       // The list inside WhatsApp's native "Keyboard shortcuts" modal that we
       // append our own shortcut entry to.
-      shortcutsList: '[data-testid="popup-contents"] > div > div',
+      shortcutsList:
+        '[data-testid="popup-contents"] > div > div[class="x78zum5 xdt5ytf xubnuyq x9u28bd xw2csxc x1odjw0f xo6wm36 x1iegka5 xc530u0 x8zx4qv xap7olu x17sy6yu x1frvojh x1vz1ssi xxbb1rq xvtidz5 xuygrt7"]',
     },
   };
 
