@@ -1,0 +1,300 @@
+:root {
+  --wa-teal-deep: #008069;
+  --wa-teal: #00a884;
+  --wa-bg: #f0f2f5;
+  --wa-surface: #ffffff;
+  --wa-ink: #111b21;
+  --wa-ink-soft: #667781;
+  --wa-border: #e9edef;
+  --wa-amber: #ffcf6b;
+  --wa-amber-ink: #3a2400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 304px;
+  margin: 0;
+  background: var(--wa-bg);
+  color: var(--wa-ink);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica Neue, Arial,
+    sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--wa-teal);
+  outline-offset: 2px;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--wa-teal-deep);
+  color: #fff;
+}
+
+.header-icon {
+  border-radius: 7px;
+  flex-shrink: 0;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header-name {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-version {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ── Mock window (signature visual) ──────────────────────
+   A miniature, looping reproduction of the actual collapse/expand the
+   extension performs on web.whatsapp.com, used in place of a generic
+   hero image. */
+
+.content {
+  padding: 14px 16px 4px;
+}
+
+.mock-window {
+  display: flex;
+  height: 52px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--wa-border);
+  background: var(--wa-surface);
+}
+
+.mock-rail {
+  flex: 0 0 20px;
+  background: var(--wa-teal-deep);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.mock-rail span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.mock-rail span:first-child {
+  background: #fff;
+}
+
+.mock-panel {
+  flex: 0 0 84px;
+  background: #e7ebee;
+  border-right: 1px solid var(--wa-border);
+  animation: wa-mock-toggle 5s ease-in-out infinite;
+}
+
+.mock-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 10px;
+  min-width: 0;
+}
+
+.mock-bubble {
+  height: 7px;
+  border-radius: 5px;
+  width: 70%;
+}
+
+.mock-bubble--in {
+  background: var(--wa-border);
+  align-self: flex-start;
+}
+
+.mock-bubble--out {
+  background: #d9fdd3;
+  align-self: flex-end;
+}
+
+.mock-bubble.short {
+  width: 42%;
+}
+
+@keyframes wa-mock-toggle {
+  0%,
+  15% {
+    flex-basis: 84px;
+    opacity: 1;
+  }
+  40%,
+  60% {
+    flex-basis: 0;
+    opacity: 0;
+  }
+  85%,
+  100% {
+    flex-basis: 84px;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mock-panel {
+    animation: none;
+  }
+}
+
+/* ── Copy ─────────────────────────────────────────────── */
+
+.tagline {
+  margin: 12px 0 6px;
+  font-size: 13px;
+  color: var(--wa-ink);
+}
+
+.tip {
+  margin: 0 0 14px;
+  font-size: 11.5px;
+  color: var(--wa-ink-soft);
+}
+
+kbd {
+  font: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: var(--wa-surface);
+  border: 1px solid var(--wa-border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--wa-ink);
+}
+
+/* ── Buttons ──────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn--ghost {
+  flex: 1;
+  background: var(--wa-surface);
+  border-color: var(--wa-border);
+  color: var(--wa-ink);
+}
+
+.btn--ghost:hover {
+  border-color: var(--wa-teal);
+  color: var(--wa-teal-deep);
+}
+
+.btn--support {
+  width: 100%;
+  margin: 4px 0 14px;
+  background: var(--wa-amber);
+  color: var(--wa-amber-ink);
+}
+
+.btn--support:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+/* ── Divider + dev row ────────────────────────────────── */
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--wa-border);
+  margin: 14px 0;
+}
+
+.dev-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.dev-label {
+  font-size: 12px;
+  color: var(--wa-ink-soft);
+}
+
+.dev-label strong {
+  color: var(--wa-ink);
+  font-weight: 600;
+}
+
+.socials {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-link {
+  display: flex;
+  color: var(--wa-ink-soft);
+  transition: color 0.15s ease;
+}
+
+.icon-link:hover {
+  color: var(--wa-teal-deep);
+}
+
+/* ── Footer ───────────────────────────────────────────── */
+
+.footer {
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--wa-ink-soft);
+  padding: 0 16px 12px;
+}
