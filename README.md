@@ -1,8 +1,12 @@
 # WA Web Sidebar Toggle
 
-A production-ready Chrome extension that adds a sleek toggle button to WhatsApp Web, letting you instantly hide or reveal the chat sidebar for a distraction-free, full-screen conversation experience.
+A small Chrome extension that adds a button (and an `Alt+S` shortcut) to [WhatsApp Web](https://web.whatsapp.com) to hide or show the left sidebar the chat list, status list, communities list, or settings panel so you can read or write a single conversation without the rest of your inbox staring back at you.
 
----
+No accounts, no servers, no analytics. It touches only `web.whatsapp.com`, requests zero permissions, and does its work entirely client-side.
+
+![Manifest V3](https://img.shields.io/badge/manifest-v3-blue)
+![Permissions](https://img.shields.io/badge/permissions-none-brightgreen)
+[![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 
 ## Features
 
@@ -18,78 +22,91 @@ A production-ready Chrome extension that adds a sleek toggle button to WhatsApp 
 
 ## Installation
 
-### From Source (Developer Mode)
-
-1. Clone or download this repository
-2. Open Chrome and navigate to `chrome://extensions`
-3. Enable **Developer mode** (toggle in the top-right corner)
-4. Click **Load unpacked**
-5. Select the `wa-sidebar-toggle` folder
-6. Open [WhatsApp Web](https://web.whatsapp.com) — the toggle button appears above the Chats icon in the left navbar
-
 ### From Chrome Web Store
 
-*(Coming soon)*
+1. Open the extension page on the **Chrome Web Store**.
+2. Click **Add to Chrome**.
+3. Confirm by clicking **Add extension** in the permission popup.
+4. Open or refresh [WhatsApp Web](https://web.whatsapp.com).
+5. The sidebar toggle button will appear in the navigation rail within a few seconds.
 
----
+The extension requires **no permissions**, does not collect data, and runs entirely inside your browser.
+
+### Manual Installation (Developer Mode)
+
+If you prefer to install from source or the extension is not yet available on the Chrome Web Store:
+
+1. Download or clone this repository.
+2. Open `chrome://extensions` in Chrome (or any Chromium-based browser such as Edge or Brave).
+3. Enable **Developer mode**.
+4. Click **Load unpacked**.
+5. Select the project folder containing `manifest.json`.
+6. Open or refresh [WhatsApp Web](https://web.whatsapp.com) — the toggle button should appear in the navigation rail within a second or two.
+
+To update a manually installed version, pull the latest changes and click the **Reload** button on the extension card in `chrome://extensions`.
 
 ## Usage
 
-| Action | Result |
-|---|---|
-| Click the **⊞ panel icon** above Chats | Hides the sidebar, chat panel expands to fill screen |
-| Click the icon again | Restores the sidebar |
-| Press `Alt + S` | Toggles sidebar from keyboard |
+| Action                              | How                                                         |
+| ----------------------------------- | ----------------------------------------------------------- |
+| Toggle the sidebar                  | Click the toggle button in the nav rail, or press `Alt + S` |
+| See the shortcut listed in WhatsApp | Open WhatsApp's menu → **Keyboard shortcuts**               |
 
-The button icon changes direction to indicate the current state:
-- **← arrow** (pointing left) = sidebar is visible, click to hide
-- **→ arrow** (pointing right) = sidebar is hidden, click to show
+The hidden/shown state is remembered for the current browser tab session (it resets on a fresh page load), so reopening WhatsApp Web starts from a clean, visible sidebar.
 
----
+## How it works
 
-## How It Works
+WhatsApp Web is a single-page app that re-renders heavily, and its CSS class names are auto-generated and unstable across releases — so this extension deliberately avoids depending on any of WhatsApp's _content-specific_ identifiers (like a particular panel's `id`), since those are the first things to change between tabs or app updates.
 
-The extension injects a content script and stylesheet into `web.whatsapp.com`. A `MutationObserver` watches for WhatsApp Web's SPA navigation to re-inject the button if the page soft-navigates. The sidebar is toggled via CSS width/opacity transitions — no DOM nodes are removed, so WhatsApp's internal React state is never disturbed.
+Instead, `src/content.js` does roughly this:
 
----
+1. **Find every top-level layout slot.** WhatsApp wraps each major region (nav rail, side panel, main conversation area) in the same generic flex-item class. The extension queries all of them.
+2. **Identify the nav rail, not the panel.** Rather than guessing which slot _is_ the side panel, it scores each slot against a handful of independent signals (does it contain the navigation buttons? is it narrow like an icon rail? does it contain our own injected button?) to figure out which one is _definitely the rail_ — and treats everything else as collapsible.
+3. **Collapse the rest.** The non-rail slots get `flex: 0 0 0%` plus zeroed width/min-width/max-width, with a CSS transition, so they shrink to nothing regardless of which tab's content currently lives inside them.
+4. **Keep reasserting.** A batched `MutationObserver` (plus a slow interval as a safety net) continuously re-applies the current hidden/shown state, because WhatsApp regularly tears down and rebuilds these wrapper nodes — without this, a collapsed sidebar could silently reappear after switching tabs.
 
-## Privacy
+This trades a bit of selector verbosity for resilience: tab-switching, message arrivals, and most WhatsApp UI tweaks shouldn't break it, since none of the logic depends on a specific panel's identity — only on its structural role.
 
-This extension:
-- Reads **no** messages, contacts, or any WhatsApp data
-- Makes **no** network requests
-- Stores only a single boolean (`wa-sidebar-toggle-hidden`) in `sessionStorage` — this never leaves your browser and is cleared when you close the tab
+## Releasing
 
----
+Version bumps, builds, and Chrome Web Store publishing are automated via GitHub Actions — see [`docs/PUBLISHING.md`](docs/PUBLISHING.md) for the one-time setup and the day-to-day release flow (`npm run release:patch`, then push the tag).
 
-## Browser Support
+## Project structure
 
-| Browser | Supported |
-|---|---|
-| Chrome 109+ | ✅ |
-| Edge 109+ | ✅ (Chromium-based) |
-| Brave | ✅ |
-| Firefox | ⚠️ Requires Manifest V2 conversion |
-| Safari | ❌ |
+```
+wa-sidebar-toggle/
+├── manifest.json          # MV3 manifest — no permissions, one content script
+├── package.json           # Release tooling only (chrome-webstore-upload-cli)
+├── src/
+│   ├── content.js          # All toggle, layout-detection, and UI logic
+│   └── content.css          # Tooltip styling
+├── popup/
+│   ├── popup.html           # Toolbar popup — info, GitHub/review/support links
+│   ├── popup.css             # WA Web themed styling for the popup
+│   └── popup.js               # CONFIG block for links + dynamic name/version
+├── icons/                  # Toolbar/extension icons
+├── scripts/
+│   ├── build.sh             # Zips the extension into dist/
+│   └── version.js           # Bumps manifest.json + tags the release
+├── .github/workflows/
+│   ├── ci.yml                # Validates + builds on every push/PR
+│   └── release.yml           # Builds + publishes on a vX.Y.Z tag
+└── docs/
+    └── PUBLISHING.md         # Chrome Web Store credential setup + release flow
+```
 
----
+## Known limitations
 
-## Permissions Requested
-
-| Permission | Reason |
-|---|---|
-| `host_permissions: web.whatsapp.com` | Required to inject the toggle button into WhatsApp Web |
-
-No other permissions are requested.
-
----
+- Selectors like `button[aria-label="Chats"]` assume an English UI; non-English WhatsApp locales may not be detected.
+- A handful of class names (the toggle button's own styling, and the keyboard-shortcuts-modal row it injects) are matched literally against WhatsApp's current markup so the injected UI looks native. If WhatsApp changes that markup, those specific bits may look slightly off even if the core toggle keeps working, since the toggle logic itself doesn't depend on them.
+- This is unaffiliated with WhatsApp/Meta and not installable from the Chrome Web Store yet.
 
 ## Contributing
 
-Pull requests welcome. Please open an issue first for major changes.
+Pull requests welcome. Please open an issue first.
 
 ---
 
 ## License
 
-MIT © 2026
+GPL v3: see [`LICENSE`](LICENSE) for details.
