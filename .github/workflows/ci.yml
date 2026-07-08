@@ -1,0 +1,32 @@
+name: CI
+
+# Runs on every push/PR so a broken manifest or syntax error gets caught
+# long before it's anywhere near a release tag. Never publishes anything.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate manifest.json is valid JSON
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
+          echo "manifest.json OK"
+
+      - name: Validate content.js syntax
+        run: node --check src/content.js
+
+      - name: Build extension zip
+        run: bash scripts/build.sh
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-build
+          path: dist/*.zip

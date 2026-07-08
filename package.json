@@ -1,0 +1,15 @@
+{
+  "name": "wa-sidebar-toggle",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Build/release tooling for the WA Web Sidebar Toggle Chrome extension. The extension's real version lives in manifest.json, not here.",
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "release:patch": "node scripts/version.js patch",
+    "release:minor": "node scripts/version.js minor",
+    "release:major": "node scripts/version.js major"
+  },
+  "devDependencies": {
+    "chrome-webstore-upload-cli": "^4.0.1"
+  }
+}

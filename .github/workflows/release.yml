@@ -1,0 +1,51 @@
+name: Release
+
+# Triggered by pushing a tag like v0.3.0. The version in that tag MUST
+# match manifest.json's "version" field - this is enforced below as a
+# safety check, so you can never accidentally publish the wrong build.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify tag matches manifest.json version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          MANIFEST_VERSION=$(node -p "require('./manifest.json').version")
+          if [ "$TAG_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match manifest.json version ($MANIFEST_VERSION)."
+            echo "Use scripts/version.js to bump the version and tag together."
+            exit 1
+          fi
+
+      - name: Build extension zip
+        run: bash scripts/build.sh
+
+      - name: Publish to the Chrome Web Store
+        # No subcommand = upload AND publish in one step (see
+        # https://github.com/fregante/chrome-webstore-upload-cli).
+        # Requires a one-time setup of Google OAuth credentials - see
+        # docs/PUBLISHING.md - stored as the repo secrets referenced below.
+        run: |
+          npx --yes chrome-webstore-upload-cli@4 \
+            --source "dist/wa-sidebar-toggle-v${GITHUB_REF_NAME#v}.zip"
+        env:
+          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
