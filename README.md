@@ -6,6 +6,7 @@ No accounts, no servers, no analytics. It touches only `web.whatsapp.com`, reque
 
 ![Manifest V3](https://img.shields.io/badge/manifest-v3-blue)
 ![Permissions](https://img.shields.io/badge/permissions-none-brightgreen)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/EXTENSION_ID.svg)](https://chromewebstore.google.com/detail/EXTENSION_ID)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 
 ## Features
@@ -98,8 +99,6 @@ wa-sidebar-toggle/
 ## Known limitations
 
 - Selectors like `button[aria-label="Chats"]` assume an English UI; non-English WhatsApp locales may not be detected.
-- A handful of class names (the toggle button's own styling, and the keyboard-shortcuts-modal row it injects) are matched literally against WhatsApp's current markup so the injected UI looks native. If WhatsApp changes that markup, those specific bits may look slightly off even if the core toggle keeps working, since the toggle logic itself doesn't depend on them.
-- This is unaffiliated with WhatsApp/Meta and not installable from the Chrome Web Store yet.
 
 ## Contributing
 
