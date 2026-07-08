@@ -20,7 +20,11 @@ body {
   background: var(--wa-bg);
   color: var(--wa-ink);
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica Neue, Arial,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Helvetica Neue,
+    Arial,
     sans-serif;
   font-size: 13px;
   line-height: 1.4;
@@ -239,15 +243,30 @@ kbd {
 }
 
 .btn--support {
-  width: 100%;
-  margin: 4px 0 14px;
   background: var(--wa-amber);
   color: var(--wa-amber-ink);
+  flex: 0 0 auto;
 }
 
 .btn--support:hover {
-  transform: translateY(-1px);
   filter: brightness(1.04);
+}
+
+.cta-row {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 14px;
+}
+
+.btn--hire {
+  flex: 1;
+  background: var(--wa-teal-deep);
+  color: #fff;
+}
+
+.btn--hire:hover {
+  background: var(--wa-teal);
+  transform: translateY(-1px);
 }
 
 /* ── Divider + dev row ────────────────────────────────── */

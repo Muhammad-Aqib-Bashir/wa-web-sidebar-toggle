@@ -1,25 +1,20 @@
 (function () {
   "use strict";
 
-  // ── Edit these to point at your own project/profiles ─────────────
-  // Everything user-facing in the popup is driven from this one block.
   const CONFIG = {
     GITHUB_REPO_URL:
       "https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle",
-    // Leave empty until the extension is actually live on the Chrome Web
-    // Store — the review button disables itself gracefully until then
-    // instead of linking to a 404.
     CHROME_STORE_EXTENSION_ID: "",
-    BUY_ME_A_COFFEE_URL: "https://www.buymeacoffee.com/your-username",
-    HIRE_URL: "https://your-portfolio.dev",
+    BUY_ME_A_COFFEE_URL: "https://ko-fi.com/muhammadaqibbashir",
+    HIRE_URL: "https://muhammadaqibbashir.netlify.app",
     DEV_NAME: "M. Aqib Bashir",
     SOCIAL_LINKS: {
       github: "https://github.com/Muhammad-Aqib-Bashir",
-      x: "https://x.com/mAqibBashir",
+      linkedin: "https://www.linkedin.com/in/muhammadaqibbashir-dev/",
+      freelancer: "https://www.freelancer.com/get/mAqibBashir?f=give",
       website: "https://muhammadaqibbashir.netlify.app",
     },
   };
-  // ───────────────────────────────────────────────────────────────
 
   function setLink(id, url) {
     const el = document.getElementById(id);
@@ -48,10 +43,13 @@
     setLink("link-hire", CONFIG.HIRE_URL);
     setLink("link-support", CONFIG.BUY_ME_A_COFFEE_URL);
     setLink("link-social-github", CONFIG.SOCIAL_LINKS.github);
-    setLink("link-social-x", CONFIG.SOCIAL_LINKS.x);
+    setLink("link-social-linkedin", CONFIG.SOCIAL_LINKS.linkedin);
+    setLink("link-social-freelancer", CONFIG.SOCIAL_LINKS.freelancer);
     setLink("link-social-site", CONFIG.SOCIAL_LINKS.website);
 
     document.getElementById("dev-name").textContent = CONFIG.DEV_NAME;
+
+    initPinBanner();
   }
 
   document.addEventListener("DOMContentLoaded", init);
