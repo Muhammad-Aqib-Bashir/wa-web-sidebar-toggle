@@ -11,7 +11,8 @@
     // instead of linking to a 404.
     CHROME_STORE_EXTENSION_ID: "",
     BUY_ME_A_COFFEE_URL: "https://www.buymeacoffee.com/your-username",
-    DEV_NAME: "Muhammad Aqib Bashir",
+    HIRE_URL: "https://your-portfolio.dev",
+    DEV_NAME: "M. Aqib Bashir",
     SOCIAL_LINKS: {
       github: "https://github.com/Muhammad-Aqib-Bashir",
       x: "https://x.com/mAqibBashir",
@@ -44,6 +45,7 @@
         ? `https://chromewebstore.google.com/detail/${CONFIG.CHROME_STORE_EXTENSION_ID}/reviews`
         : "",
     );
+    setLink("link-hire", CONFIG.HIRE_URL);
     setLink("link-support", CONFIG.BUY_ME_A_COFFEE_URL);
     setLink("link-social-github", CONFIG.SOCIAL_LINKS.github);
     setLink("link-social-x", CONFIG.SOCIAL_LINKS.x);
