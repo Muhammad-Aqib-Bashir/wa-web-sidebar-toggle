@@ -68,6 +68,15 @@ Instead, `src/content.js` does roughly this:
 
 This trades a bit of selector verbosity for resilience: tab-switching, message arrivals, and most WhatsApp UI tweaks shouldn't break it, since none of the logic depends on a specific panel's identity — only on its structural role.
 
+## Building locally
+
+```bash
+npm install
+npm run build
+```
+
+This produces `dist/wa-sidebar-toggle-v<version>.zip`. The build script (`scripts/build.js`) is plain Node.js — it uses the [`yazl`](https://www.npmjs.com/package/yazl) library instead of shelling out to the `zip`/`bash` CLI tools, so `npm run build` works identically on Windows, macOS, and Linux with nothing installed beyond Node.js itself (no WSL, Git Bash, or Cygwin needed). CI builds and uploads the zip on Ubuntu, Windows, and macOS on every push/PR, so a platform-specific regression gets caught automatically.
+
 ## Releasing
 
 Version bumps, builds, and Chrome Web Store publishing are automated via GitHub Actions — see [`docs/PUBLISHING.md`](docs/PUBLISHING.md) for the one-time setup and the day-to-day release flow (`npm run release:patch`, then push the tag).
@@ -87,7 +96,7 @@ wa-sidebar-toggle/
 │   └── popup.js               # CONFIG block for links + dynamic name/version
 ├── icons/                  # Toolbar/extension icons
 ├── scripts/
-│   ├── build.sh             # Zips the extension into dist/
+│   ├── build.js              # Zips the extension into dist/ (pure Node — works on Windows/macOS/Linux)
 │   └── version.js           # Bumps manifest.json + tags the release
 ├── .github/workflows/
 │   ├── ci.yml                # Validates + builds on every push/PR

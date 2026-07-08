@@ -1,7 +1,12 @@
 name: CI
 
-# Runs on every push/PR so a broken manifest or syntax error gets caught
-# long before it's anywhere near a release tag. Never publishes anything.
+# Runs on every push/PR so a broken manifest, syntax error, or
+# platform-specific build issue gets caught long before it's anywhere near
+# a release tag. Never publishes anything.
+#
+# The build itself runs on Ubuntu, Windows, and macOS: scripts/build.js is
+# pure Node.js (no bash/zip CLI dependency), so this matrix is what proves
+# it actually works the same way on every OS a contributor might use.
 on:
   push:
     branches: [main]
@@ -22,11 +27,28 @@ jobs:
       - name: Validate content.js syntax
         run: node --check src/content.js
 
+  build:
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build extension zip
-        run: bash scripts/build.sh
+        run: npm run build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: extension-build
+          name: extension-build-${{ matrix.os }}
           path: dist/*.zip

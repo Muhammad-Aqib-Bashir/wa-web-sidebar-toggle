@@ -16,6 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Verify tag matches manifest.json version
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
@@ -27,7 +34,7 @@ jobs:
           fi
 
       - name: Build extension zip
-        run: bash scripts/build.sh
+        run: npm run build
 
       - name: Publish to the Chrome Web Store
         # No subcommand = upload AND publish in one step (see
