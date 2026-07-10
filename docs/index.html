@@ -1,0 +1,1591 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WA Web Sidebar Toggle — Focus on one conversation</title>
+    <meta
+      name="description"
+      content="A free Chrome extension that hides the WhatsApp Web sidebar with one click or Alt+S. Distraction-free chats, private screen sharing."
+    />
+    <meta property="og:title" content="WA Web Sidebar Toggle" />
+    <meta
+      property="og:description"
+      content="Hide the WhatsApp Web sidebar with one click. Free Chrome extension."
+    />
+    <meta property="og:type" content="website" />
+    <style>
+      /* ── Tokens ─────────────────────────────────────────────────── */
+      :root {
+        --teal-deep: #008069;
+        --teal: #00a884;
+        --teal-light: #e7f8f4;
+        --bg: #f0f2f5;
+        --surface: #ffffff;
+        --ink: #111b21;
+        --ink-2: #3b4a54;
+        --ink-soft: #667781;
+        --border: #e9edef;
+        --amber: #ffcf6b;
+        --amber-ink: #3a2400;
+        --wa-green: #d9fdd3; /* outgoing bubble colour */
+        --radius: 10px;
+        --radius-lg: 16px;
+      }
+
+      /* ── Reset ──────────────────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica Neue,
+          Arial,
+          sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.6;
+        font-size: 15px;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      a {
+        color: inherit;
+      }
+      ul {
+        list-style: none;
+      }
+
+      /* ── Nav ─────────────────────────────────────────────────────── */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--teal-deep);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 5vw;
+        height: 56px;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      /* Mini extension icon drawn in pure CSS */
+      .nav-icon {
+        width: 28px;
+        height: 28px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .nav-links a {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 13.5px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+      }
+
+      .nav-links .btn-nav {
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .nav-links .btn-nav:hover {
+        background: rgba(255, 255, 255, 0.28);
+      }
+
+      /* ── Hero ─────────────────────────────────────────────────────── */
+      .hero {
+        background: linear-gradient(
+          160deg,
+          #006b57 0%,
+          var(--teal-deep) 40%,
+          #005044 100%
+        );
+        color: #fff;
+        padding: 72px 5vw 80px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 48px;
+        align-items: center;
+      }
+
+      .hero-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin-bottom: 14px;
+      }
+
+      .hero h1 {
+        font-size: clamp(28px, 5vw, 44px);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin-bottom: 20px;
+      }
+
+      .hero h1 em {
+        font-style: normal;
+        color: var(--amber);
+      }
+
+      .hero-sub {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 480px;
+        line-height: 1.65;
+        margin-bottom: 32px;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 20px;
+        border-radius: var(--radius);
+        border: 1.5px solid transparent;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          transform 0.12s,
+          filter 0.12s,
+          background 0.15s;
+        white-space: nowrap;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.07);
+      }
+
+      .btn-primary {
+        background: var(--amber);
+        color: var(--amber-ink);
+      }
+
+      .btn-ghost-light {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.25);
+        color: #fff;
+      }
+
+      .btn-ghost-light:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* ── Mock WhatsApp window (the signature hero visual) ────────── */
+      /* A static snapshot of the sidebar-hidden state: users immediately
+       understand what the extension does without reading a word. */
+      .hero-demo {
+        flex-shrink: 0;
+      }
+
+      .mock-app {
+        width: 340px;
+        height: 230px;
+        background: #0b141a;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        display: flex;
+        box-shadow:
+          0 24px 64px rgba(0, 0, 0, 0.4),
+          0 0 0 1px rgba(255, 255, 255, 0.06);
+        font-size: 11px;
+      }
+
+      .mock-rail-bar {
+        width: 52px;
+        background: #202c33;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px 0;
+        gap: 6px;
+        border-right: 1px solid #2a3942;
+        flex-shrink: 0;
+      }
+
+      .mock-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--teal-deep);
+        margin-bottom: 6px;
+      }
+
+      .mock-dot {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .mock-dot.active {
+        background: rgba(0, 168, 132, 0.25);
+      }
+
+      .mock-dot.highlight {
+        background: var(--teal-deep);
+      }
+
+      /* The sidebar panel is hidden — no mock-panel shown, just a thin
+       divider line where it would be, to communicate "collapsed". */
+      .mock-collapsed-hint {
+        width: 3px;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(0, 168, 132, 0.4),
+          transparent
+        );
+      }
+
+      .mock-chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #0b141a;
+      }
+
+      .mock-chat-header {
+        height: 52px;
+        background: #202c33;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        border-bottom: 1px solid #2a3942;
+        flex-shrink: 0;
+      }
+
+      .mock-chat-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #3b4a54;
+        flex-shrink: 0;
+      }
+
+      .mock-chat-name {
+        height: 9px;
+        width: 80px;
+        background: #e9edef;
+        border-radius: 4px;
+      }
+
+      .mock-chat-status {
+        height: 6px;
+        width: 50px;
+        background: #3b4a54;
+        border-radius: 4px;
+        margin-top: 5px;
+      }
+
+      .mock-messages {
+        flex: 1;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .mock-msg {
+        height: 30px;
+        border-radius: 8px;
+        max-width: 65%;
+      }
+
+      .mock-msg.in {
+        background: #202c33;
+        align-self: flex-start;
+        width: 55%;
+      }
+      .mock-msg.out {
+        background: #005c4b;
+        align-self: flex-end;
+        width: 45%;
+      }
+      .mock-msg.wide {
+        width: 70%;
+      }
+      .mock-msg.short {
+        width: 35%;
+      }
+
+      .mock-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(0, 168, 132, 0.15);
+        border: 1px solid rgba(0, 168, 132, 0.35);
+        color: var(--teal);
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 999px;
+        margin: 24px auto 0;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      /* ── Pill bar ─────────────────────────────────────────────────── */
+      .pill-bar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0 5vw;
+        display: flex;
+        gap: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .pill-bar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .pill-bar a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 14px 18px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink-soft);
+        text-decoration: none;
+        border-bottom: 2.5px solid transparent;
+        white-space: nowrap;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+
+      .pill-bar a:hover {
+        color: var(--teal-deep);
+        border-bottom-color: var(--teal-deep);
+      }
+
+      /* ── Sections ─────────────────────────────────────────────────── */
+      .section {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 64px 5vw;
+      }
+
+      .section + .section {
+        border-top: 1px solid var(--border);
+      }
+
+      .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin-bottom: 10px;
+      }
+
+      .section h2 {
+        font-size: clamp(22px, 3.5vw, 30px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin-bottom: 20px;
+        color: var(--ink);
+      }
+
+      .section p {
+        color: var(--ink-2);
+        max-width: 620px;
+        margin-bottom: 16px;
+      }
+
+      /* ── Feature grid ─────────────────────────────────────────────── */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        margin-top: 32px;
+      }
+
+      .feature-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .feature-card:hover {
+        border-color: var(--teal);
+        box-shadow: 0 4px 24px rgba(0, 128, 105, 0.08);
+      }
+
+      .feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--teal-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+        color: var(--teal-deep);
+      }
+
+      .feature-card h3 {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .feature-card p {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin: 0;
+      }
+
+      /* ── Install steps ────────────────────────────────────────────── */
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin-top: 32px;
+        position: relative;
+      }
+
+      .steps::before {
+        content: "";
+        position: absolute;
+        left: 18px;
+        top: 28px;
+        bottom: 28px;
+        width: 2px;
+        background: var(--border);
+      }
+
+      .step {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        padding: 20px 0;
+      }
+
+      .step-num {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--teal-deep);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .step-content {
+        padding-top: 7px;
+      }
+
+      .step-content h3 {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .step-content p {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin: 0;
+        max-width: 520px;
+      }
+
+      .step-content code {
+        font-family: "SF Mono", "Fira Code", Consolas, monospace;
+        font-size: 12.5px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        padding: 1px 6px;
+        color: var(--ink);
+      }
+
+      /* ── Keyboard shortcut block ──────────────────────────────────── */
+      .shortcut-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px 24px;
+        margin-top: 32px;
+      }
+
+      .shortcut-keys {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      kbd {
+        font-family: "SF Mono", "Fira Code", Consolas, monospace;
+        font-size: 13px;
+        font-weight: 600;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-bottom-width: 3px;
+        border-radius: 6px;
+        padding: 4px 10px;
+        color: var(--ink);
+        display: inline-block;
+      }
+
+      .shortcut-plus {
+        color: var(--ink-soft);
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .shortcut-desc {
+        color: var(--ink-2);
+        font-size: 14px;
+      }
+
+      /* ── Permissions table ────────────────────────────────────────── */
+      .perms {
+        margin-top: 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+
+      .perm-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .perm-row:last-child {
+        border-bottom: none;
+      }
+
+      .perm-icon {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        background: var(--teal-light);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--teal-deep);
+        margin-top: 1px;
+      }
+
+      .perm-name {
+        font-size: 13px;
+        font-weight: 700;
+        font-family: "SF Mono", "Fira Code", Consolas, monospace;
+        color: var(--teal-deep);
+        margin-bottom: 2px;
+      }
+
+      .perm-desc {
+        font-size: 13px;
+        color: var(--ink-soft);
+      }
+
+      /* ── Privacy highlight ────────────────────────────────────────── */
+      .privacy-highlight {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        background: #f0faf7;
+        border: 1px solid #b7e9de;
+        border-radius: var(--radius-lg);
+        padding: 20px 24px;
+        margin-bottom: 24px;
+      }
+
+      .privacy-highlight-icon {
+        flex-shrink: 0;
+        color: var(--teal-deep);
+        margin-top: 2px;
+      }
+
+      .privacy-highlight h3 {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .privacy-highlight p {
+        font-size: 13.5px;
+        color: var(--ink-2);
+        margin: 0;
+      }
+
+      /* ── Changelog ────────────────────────────────────────────────── */
+      .changelog {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .release {
+        display: flex;
+        gap: 20px;
+      }
+
+      .release-meta {
+        flex-shrink: 0;
+        width: 100px;
+        text-align: right;
+        padding-top: 3px;
+      }
+
+      .release-version {
+        font-size: 13px;
+        font-weight: 700;
+        font-family: "SF Mono", "Fira Code", Consolas, monospace;
+        color: var(--teal-deep);
+      }
+
+      .release-date {
+        font-size: 11.5px;
+        color: var(--ink-soft);
+        margin-top: 2px;
+      }
+
+      .release-line {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+      }
+
+      .release-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--teal-deep);
+        flex-shrink: 0;
+      }
+
+      .release-line-bar {
+        width: 2px;
+        flex: 1;
+        background: var(--border);
+        margin-top: 6px;
+      }
+
+      .release:last-child .release-line-bar {
+        display: none;
+      }
+
+      .release-body {
+        padding-bottom: 24px;
+      }
+
+      .release-body h3 {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        padding-top: 1px;
+      }
+
+      .release-body ul {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .release-body li {
+        font-size: 13.5px;
+        color: var(--ink-2);
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .release-body li::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--ink-soft);
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+
+      .release-tag {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+      }
+
+      .tag-added {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .tag-fixed {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      /* ── CTA band ─────────────────────────────────────────────────── */
+      .cta-band {
+        background: linear-gradient(135deg, var(--teal-deep), #005044);
+        color: #fff;
+        padding: 64px 5vw;
+        text-align: center;
+      }
+
+      .cta-band h2 {
+        font-size: clamp(22px, 3.5vw, 30px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 12px;
+      }
+
+      .cta-band p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 15px;
+        max-width: 480px;
+        margin: 0 auto 32px;
+      }
+
+      .cta-band-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* ── Footer ───────────────────────────────────────────────────── */
+      footer {
+        background: #0b141a;
+        color: rgba(255, 255, 255, 0.55);
+        padding: 32px 5vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 12.5px;
+      }
+
+      footer a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+      }
+      footer a:hover {
+        color: #fff;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 20px;
+      }
+
+      /* ── Responsive ───────────────────────────────────────────────── */
+      @media (max-width: 720px) {
+        .hero {
+          grid-template-columns: 1fr;
+          padding-bottom: 48px;
+        }
+
+        .hero-demo {
+          display: none;
+        }
+
+        .nav-links a:not(.btn-nav) {
+          display: none;
+        }
+
+        .release {
+          flex-direction: column;
+          gap: 8px;
+        }
+        .release-line {
+          display: none;
+        }
+        .release-meta {
+          text-align: left;
+          width: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Nav ───────────────────────────────────────────────────────── -->
+    <nav class="nav">
+      <a href="#" class="nav-brand">
+        <div class="nav-icon">
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="#fff"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="4" width="18" height="16" rx="2.2" />
+            <path d="M7 8v8" />
+          </svg>
+        </div>
+        WA Web Sidebar Toggle
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#privacy">Privacy</a>
+        <a
+          href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+        <a
+          href="https://chromewebstore.google.com/detail/your-extension-id"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-nav"
+        >
+          Add to Chrome
+        </a>
+      </div>
+    </nav>
+
+    <!-- ── Hero ──────────────────────────────────────────────────────── -->
+    <section class="hero">
+      <div class="hero-text">
+        <p class="hero-eyebrow">Free Chrome Extension</p>
+        <h1>Hide the sidebar.<br /><em>Focus on one chat.</em></h1>
+        <p class="hero-sub">
+          One button collapses the entire WhatsApp Web sidebar — chat list,
+          unread counts, contact names — so you can finish what you're doing
+          without your inbox competing for attention.
+        </p>
+        <div class="hero-actions">
+          <a
+            href="https://chromewebstore.google.com/detail/your-extension-id"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-primary"
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"
+              />
+            </svg>
+            Add to Chrome — it's free
+          </a>
+          <a
+            href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-ghost-light"
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+              <path
+                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+              />
+            </svg>
+            View source
+          </a>
+        </div>
+      </div>
+
+      <!-- Mock WhatsApp UI showing sidebar in the collapsed state -->
+      <div class="hero-demo" aria-hidden="true">
+        <div class="mock-app">
+          <div class="mock-rail-bar">
+            <div class="mock-avatar"></div>
+            <div class="mock-dot"></div>
+            <div class="mock-dot"></div>
+            <div class="mock-dot highlight"></div>
+            <div class="mock-dot active"></div>
+            <div class="mock-dot"></div>
+          </div>
+          <div class="mock-collapsed-hint"></div>
+          <div class="mock-chat">
+            <div class="mock-chat-header">
+              <div class="mock-chat-avatar"></div>
+              <div>
+                <div class="mock-chat-name"></div>
+                <div class="mock-chat-status"></div>
+              </div>
+            </div>
+            <div class="mock-messages">
+              <div class="mock-msg in wide"></div>
+              <div class="mock-msg out"></div>
+              <div class="mock-msg in short"></div>
+              <div class="mock-msg out wide"></div>
+              <div class="mock-msg in"></div>
+            </div>
+            <div style="text-align: center; padding: 10px 0 14px">
+              <span class="mock-badge">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="10"
+                  height="10"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Sidebar hidden
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Pill nav ───────────────────────────────────────────────────── -->
+    <div class="pill-bar">
+      <a href="#features">Features</a>
+      <a href="#install">Installation</a>
+      <a href="#usage">Usage</a>
+      <a href="#shortcut">Keyboard shortcut</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#changelog">Changelog</a>
+      <a href="privacy-policy">Privacy policy</a>
+    </div>
+
+    <!-- ── Features ──────────────────────────────────────────────────── -->
+    <section class="section" id="features">
+      <p class="section-label">What it does</p>
+      <h2>Everything you need.<br />Nothing you don't.</h2>
+      <p>
+        A single-purpose tool built to do one thing cleanly and stay out of the
+        way of everything else.
+      </p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M7 8v8" />
+            </svg>
+          </div>
+          <h3>Works on every tab</h3>
+          <p>
+            Collapses identically whether you're on Chats, Status, Communities,
+            or Settings. Switching tabs doesn't pop it back open.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+            </svg>
+          </div>
+          <h3>Screen sharing ready</h3>
+          <p>
+            Press Alt+S before you share. Your inbox, contact names, and unread
+            counts disappear instantly.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <h3>Zero permissions</h3>
+          <p>
+            Only requests access to web.whatsapp.com. Reads no messages. Talks
+            to no servers. Nothing leaves your browser.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="4 17 10 11 4 5" />
+              <line x1="12" y1="19" x2="20" y2="19" />
+            </svg>
+          </div>
+          <h3>Keyboard shortcut</h3>
+          <p>
+            Alt+S toggles from anywhere on WhatsApp Web. Also listed in
+            WhatsApp's own keyboard shortcuts modal (Ctrl+/).
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <h3>Smooth animation</h3>
+          <p>
+            400ms eased collapse and expand. Respects your OS reduced-motion
+            preference automatically.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+          </div>
+          <h3>Open source</h3>
+          <p>
+            MIT licensed. Every line of code is readable on GitHub. No
+            obfuscation, no surprises.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Install ────────────────────────────────────────────────────── -->
+    <section class="section" id="install">
+      <p class="section-label">Get started</p>
+      <h2>Install in 30 seconds</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Add from the Chrome Web Store</h3>
+            <p>
+              Click <strong>Add to Chrome</strong> on the store listing. No
+              account required, nothing to sign up for.
+            </p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Pin it to your toolbar</h3>
+            <p>
+              Click the puzzle icon 🧩 in Chrome's toolbar → find
+              <strong>WA Web Sidebar Toggle</strong> → click the pin icon. This
+              keeps it one click away.
+            </p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Open WhatsApp Web</h3>
+            <p>
+              Go to
+              <a
+                href="https://web.whatsapp.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="color: var(--teal-deep); font-weight: 600"
+                >web.whatsapp.com</a
+              >
+              — the toggle button appears in the navigation rail automatically
+              within a second.
+            </p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Click the button or press Alt+S</h3>
+            <p>
+              The sidebar collapses. Press again to bring it back. That's the
+              whole thing.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 32px">
+        <p
+          style="font-size: 13.5px; color: var(--ink-soft); margin-bottom: 14px"
+        >
+          Prefer to install manually from source?
+        </p>
+        <div class="steps" style="margin-top: 0">
+          <div class="step">
+            <div
+              class="step-num"
+              style="background: var(--ink-soft); font-size: 13px"
+            >
+              a
+            </div>
+            <div class="step-content">
+              <h3>Clone or download the repo</h3>
+              <p>
+                <code
+                  >git clone
+                  https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle.git</code
+                >
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div
+              class="step-num"
+              style="background: var(--ink-soft); font-size: 13px"
+            >
+              b
+            </div>
+            <div class="step-content">
+              <h3>Open <code>chrome://extensions</code></h3>
+              <p>
+                Enable <strong>Developer mode</strong> (toggle, top-right),
+                click <strong>Load unpacked</strong>, select the folder
+                containing <code>manifest.json</code>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Usage ──────────────────────────────────────────────────────── -->
+    <section class="section" id="usage">
+      <p class="section-label">Usage</p>
+      <h2>How to use it</h2>
+      <p>
+        The toggle button appears in WhatsApp's navigation rail — the narrow
+        icon strip on the far left. It lives between the Communities button and
+        the Settings button.
+      </p>
+      <p>
+        Click it once to collapse the sidebar. Click again to restore it. Your
+        choice persists for the current browser session — reopening the tab
+        starts fresh with the sidebar visible.
+      </p>
+      <p>
+        If you're on a non-English WhatsApp, the button still appears in the
+        same position. The extension uses structural layout detection, not
+        English-specific labels, to place itself.
+      </p>
+    </section>
+
+    <!-- ── Shortcut ───────────────────────────────────────────────────── -->
+    <section class="section" id="shortcut">
+      <p class="section-label">Keyboard shortcut</p>
+      <h2>Keep your hands on the keyboard</h2>
+      <p>
+        The shortcut works anywhere on web.whatsapp.com — you don't need to
+        click the button.
+      </p>
+
+      <div class="shortcut-row">
+        <div class="shortcut-keys">
+          <kbd>Alt</kbd>
+          <span class="shortcut-plus">+</span>
+          <kbd>S</kbd>
+        </div>
+        <span class="shortcut-desc"
+          >Toggle the sidebar from anywhere on WhatsApp Web</span
+        >
+      </div>
+
+      <p style="margin-top: 20px; font-size: 13.5px; color: var(--ink-soft)">
+        The shortcut is also listed in WhatsApp's own built-in keyboard
+        reference — press <kbd>Ctrl</kbd> + <kbd>/</kbd> inside WhatsApp Web to
+        see it alongside WhatsApp's native shortcuts.
+      </p>
+    </section>
+
+    <!-- ── Privacy ────────────────────────────────────────────────────── -->
+    <section class="section" id="privacy">
+      <p class="section-label">Privacy</p>
+      <h2>No data. Full stop.</h2>
+
+      <div class="privacy-highlight">
+        <div class="privacy-highlight-icon">
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <polyline points="9 12 11 14 15 10" />
+          </svg>
+        </div>
+        <div>
+          <h3>Nothing leaves your browser</h3>
+          <p>
+            No analytics, no telemetry, no servers. This extension has no
+            network requests of any kind. It cannot read your messages,
+            contacts, or any WhatsApp content.
+          </p>
+        </div>
+      </div>
+
+      <div class="perms">
+        <div class="perm-row">
+          <div class="perm-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path
+                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="perm-name">web.whatsapp.com</div>
+            <div class="perm-desc">
+              Required to inject the toggle button into the page. The extension
+              runs on this domain only, nowhere else.
+            </div>
+          </div>
+        </div>
+        <div class="perm-row">
+          <div class="perm-icon">
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="perm-name">storage</div>
+            <div class="perm-desc">
+              Stores only whether you've dismissed the "pin this extension"
+              reminder. One boolean. Never read by any website or third party.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top: 20px">
+        <a
+          href="privacy-policy"
+          style="color: var(--teal-deep); font-weight: 600"
+          >Read the full privacy policy →</a
+        >
+      </p>
+    </section>
+
+    <!-- ── Changelog ──────────────────────────────────────────────────── -->
+    <section class="section" id="changelog">
+      <p class="section-label">Changelog</p>
+      <h2>What's changed</h2>
+
+      <div class="changelog">
+        <div class="release">
+          <div class="release-meta">
+            <div class="release-version">v0.2.0</div>
+            <div class="release-date">Jul 2025</div>
+          </div>
+          <div class="release-line">
+            <div class="release-dot"></div>
+            <div class="release-line-bar"></div>
+          </div>
+          <div class="release-body">
+            <h3>Popup, welcome page &amp; CI/CD</h3>
+            <ul>
+              <li>
+                <span class="release-tag tag-added">Added</span>Toolbar popup
+                with GitHub, reviews, Upwork, Freelancer, and coffee links
+              </li>
+              <li>
+                <span class="release-tag tag-added">Added</span>One-time pin
+                reminder banner in the popup
+              </li>
+              <li>
+                <span class="release-tag tag-added">Added</span>Welcome page on
+                first install
+              </li>
+              <li>
+                <span class="release-tag tag-added">Added</span>Alt+S shortcut
+                appears in WhatsApp's own keyboard shortcuts modal
+              </li>
+              <li>
+                <span class="release-tag tag-added">Added</span>Automated CI +
+                release pipeline via GitHub Actions
+              </li>
+              <li>
+                <span class="release-tag tag-fixed">Fixed</span>Stray chat-list
+                header bar now hidden alongside the panel
+              </li>
+              <li>
+                <span class="release-tag tag-fixed">Fixed</span>Tooltip rebuilt
+                as body-level element to escape clipping ancestor
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="release">
+          <div class="release-meta">
+            <div class="release-version">v0.1.0</div>
+            <div class="release-date">Jun 2025</div>
+          </div>
+          <div class="release-line">
+            <div class="release-dot"></div>
+            <div class="release-line-bar"></div>
+          </div>
+          <div class="release-body">
+            <h3>Reliable toggle across all tabs</h3>
+            <ul>
+              <li>
+                <span class="release-tag tag-added">Added</span>Toggle button in
+                WhatsApp's navigation rail
+              </li>
+              <li>
+                <span class="release-tag tag-added">Added</span>Alt+S keyboard
+                shortcut
+              </li>
+              <li>
+                <span class="release-tag tag-added">Added</span>Smooth 400ms
+                eased animation
+              </li>
+              <li>
+                <span class="release-tag tag-fixed">Fixed</span>Replaced
+                unreliable <code>#side</code> targeting with structural nav-rail
+                detection — now works on Chats, Status, Communities, and
+                Settings
+              </li>
+              <li>
+                <span class="release-tag tag-fixed">Fixed</span>MutationObserver
+                + interval keeps state applied after WhatsApp re-renders
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="release">
+          <div class="release-meta">
+            <div class="release-version">v0.0.0</div>
+            <div class="release-date">Jun 2025</div>
+          </div>
+          <div class="release-line">
+            <div class="release-dot"></div>
+            <div class="release-line-bar"></div>
+          </div>
+          <div class="release-body">
+            <h3>Initial scaffold</h3>
+            <ul>
+              <li>
+                <span class="release-tag tag-added">Added</span>manifest.json,
+                content.js, content.css, icons
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA band ───────────────────────────────────────────────────── -->
+    <div class="cta-band">
+      <h2>Ready to focus?</h2>
+      <p>
+        Free, open source, takes 30 seconds to install. No account, no tracking,
+        no nonsense.
+      </p>
+      <div class="cta-band-actions">
+        <a
+          href="https://chromewebstore.google.com/detail/your-extension-id"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary"
+        >
+          Add to Chrome — free
+        </a>
+        <a
+          href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-ghost-light"
+        >
+          View on GitHub
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Footer ─────────────────────────────────────────────────────── -->
+    <footer>
+      <span
+        >WA Web Sidebar Toggle — built by
+        <a
+          href="https://your-website.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Your Name</a
+        ></span
+      >
+      <div class="footer-links">
+        <a href="privacy-policy">Privacy policy</a>
+        <a
+          href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+        <a
+          href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Report a bug</a
+        >
+        <a
+          href="https://www.upwork.com/freelancers/your-profile"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Hire me</a
+        >
+      </div>
+      <span style="color: rgba(255, 255, 255, 0.3)"
+        >Not affiliated with WhatsApp or Meta.</span
+      >
+    </footer>
+  </body>
+</html>
