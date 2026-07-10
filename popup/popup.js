@@ -10,11 +10,11 @@
     DEV_NAME: "M. Aqib Bashir",
     SOCIAL_LINKS: {
       github: "https://github.com/Muhammad-Aqib-Bashir",
-      linkedin: "https://www.linkedin.com/in/muhammadaqibbashir-dev/",
-      freelancer: "https://www.freelancer.com/get/mAqibBashir?f=give",
-      website: "https://muhammadaqibbashir.netlify.app",
+      x: "https://x.com/your-handle",
+      website: "https://your-website.dev",
     },
   };
+  // ───────────────────────────────────────────────────────────────
 
   function setLink(id, url) {
     const el = document.getElementById(id);
@@ -26,6 +26,22 @@
       return;
     }
     el.href = url;
+  }
+
+  function initPinBanner() {
+    const banner = document.getElementById("pin-banner");
+    const closeBtn = document.getElementById("pin-banner-close");
+    if (!banner || !closeBtn) return;
+
+    chrome.storage.local.get("pinBannerDismissed", (result) => {
+      if (result.pinBannerDismissed) return;
+      banner.hidden = false;
+    });
+
+    closeBtn.addEventListener("click", () => {
+      banner.hidden = true;
+      chrome.storage.local.set({ pinBannerDismissed: true });
+    });
   }
 
   function init() {

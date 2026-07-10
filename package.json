@@ -1,5 +1,5 @@
 {
-  "name": "wa-sidebar-toggle",
+  "name": "wa-web-sidebar-toggle",
   "private": true,
   "version": "0.0.0",
   "description": "Build/release tooling for the WA Web Sidebar Toggle Chrome extension. The extension's real version lives in manifest.json, not here.",

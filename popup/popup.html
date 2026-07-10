@@ -20,6 +20,41 @@
       </div>
     </header>
 
+    <!-- One-time pin reminder. Hidden by default; shown via JS only on
+         first popup open. Dismissed state is persisted in storage so it
+         never reappears after the user closes it. -->
+    <div class="pin-banner" id="pin-banner" hidden>
+      <div class="pin-banner-body">
+        <svg
+          viewBox="0 0 24 24"
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="12" y1="17" x2="12" y2="22" />
+          <path
+            d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"
+          />
+        </svg>
+        <span
+          >Pin this extension — right-click the puzzle&nbsp;🧩 icon →
+          <strong>Pin</strong></span
+        >
+      </div>
+      <button
+        class="pin-banner-close"
+        id="pin-banner-close"
+        aria-label="Dismiss"
+      >
+        ✕
+      </button>
+    </div>
+
     <main class="content">
       <!-- Miniature, looping mock of the actual collapse/expand the
            extension performs - the signature visual, not decoration. -->

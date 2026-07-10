@@ -43,7 +43,7 @@ jobs:
         # docs/PUBLISHING.md - stored as the repo secrets referenced below.
         run: |
           npx --yes chrome-webstore-upload-cli@4 \
-            --source "dist/wa-sidebar-toggle-v${GITHUB_REF_NAME#v}.zip"
+            --source "dist/wa-web-sidebar-toggle-v${GITHUB_REF_NAME#v}.zip"
         env:
           EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
           CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}

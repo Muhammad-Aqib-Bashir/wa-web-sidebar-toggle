@@ -15,7 +15,7 @@ function readManifestVersion() {
   const manifestPath = path.join(ROOT_DIR, "manifest.json");
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
   if (!manifest.version) {
-    throw new Error("manifest.json is missing a \"version\" field");
+    throw new Error('manifest.json is missing a "version" field');
   }
   return manifest.version;
 }
@@ -40,7 +40,7 @@ function collectEntries(realPath, zipRelativePath, entries) {
 
 function build() {
   const version = readManifestVersion();
-  const outFile = path.join(OUT_DIR, `wa-sidebar-toggle-v${version}.zip`);
+  const outFile = path.join(OUT_DIR, `wa-web-sidebar-toggle-v${version}.zip`);
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
   if (fs.existsSync(outFile)) fs.rmSync(outFile);

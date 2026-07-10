@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy — WA Web Sidebar Toggle</title>
+    <link rel="shortcut icon" href="../icons/icon64.png" type="image/x-icon" />
+    <style>
+      body {
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica Neue,
+          Arial,
+          sans-serif;
+        max-width: 680px;
+        margin: 60px auto;
+        padding: 0 24px 80px;
+        color: #111b21;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      h1 {
+        font-size: 26px;
+        margin-bottom: 6px;
+      }
+      h2 {
+        font-size: 17px;
+        margin: 32px 0 8px;
+      }
+      .meta {
+        color: #667781;
+        font-size: 13px;
+        margin-bottom: 40px;
+      }
+      p {
+        margin-bottom: 14px;
+      }
+      a {
+        color: #008069;
+      }
+      .highlight {
+        background: #f0faf7;
+        border-left: 4px solid #00a884;
+        padding: 14px 18px;
+        border-radius: 0 8px 8px 0;
+        margin: 24px 0;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Privacy Policy</h1>
+    <p class="meta">
+      WA Web Sidebar Toggle &nbsp;·&nbsp; Last updated: <span id="date"></span>
+    </p>
+
+    <div class="highlight">
+      Short version: this extension collects no data whatsoever. Nothing leaves
+      your browser. There are no servers, no analytics, no tracking.
+    </div>
+
+    <h2>What data does this extension collect?</h2>
+    <p>
+      <strong>None.</strong> WA Web Sidebar Toggle does not collect, transmit,
+      store, or share any personal data, usage data, browsing history, or any
+      other information.
+    </p>
+
+    <h2>What permissions does it use and why?</h2>
+    <p>
+      <strong><code>host_permissions</code> for web.whatsapp.com</strong> —
+      required to inject the toggle button into the WhatsApp Web page. The
+      extension only runs on that domain and nowhere else.
+    </p>
+    <p>
+      <strong><code>storage</code></strong> — used exclusively to remember
+      whether you have dismissed the "pin this extension" reminder. This value
+      never leaves your browser and is not readable by any website or third
+      party.
+    </p>
+
+    <h2>Does it access my WhatsApp messages?</h2>
+    <p>
+      No. The extension only manipulates the visibility of the sidebar panel (a
+      layout element). It does not read, intercept, or process any messages,
+      contacts, media, or any other WhatsApp content.
+    </p>
+
+    <h2>Does it communicate with any external servers?</h2>
+    <p>
+      No. The extension has no network requests of any kind. There is no
+      backend, no telemetry endpoint, and no third-party SDK included.
+    </p>
+
+    <h2>Does it use cookies or local storage?</h2>
+    <p>
+      It uses <code>sessionStorage</code> on web.whatsapp.com only to remember
+      the collapsed/expanded state of the sidebar for the current browser tab
+      session. This is cleared automatically when the tab is closed. It also
+      uses <code>chrome.storage.local</code> solely to remember whether the pin
+      reminder has been dismissed.
+    </p>
+
+    <h2>Changes to this policy</h2>
+    <p>
+      If anything about the above ever changes, this page will be updated and
+      the extension version will be bumped. You can always find the latest
+      version at this URL.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Questions? Open an issue on
+      <a
+        href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle"
+        target="_blank"
+        rel="noopener noreferrer"
+        >GitHub</a
+      >
+      or email
+      <a href="mailto:muhammadaqibbashir.dev@gmail.com"
+        >muhammadaqibbashir.dev@gmail.com</a
+      >.
+    </p>
+
+    <script>
+      document.getElementById("date").textContent =
+        new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+    </script>
+  </body>
+</html>

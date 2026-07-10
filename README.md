@@ -75,7 +75,7 @@ npm install
 npm run build
 ```
 
-This produces `dist/wa-sidebar-toggle-v<version>.zip`. The build script (`scripts/build.js`) is plain Node.js — it uses the [`yazl`](https://www.npmjs.com/package/yazl) library instead of shelling out to the `zip`/`bash` CLI tools, so `npm run build` works identically on Windows, macOS, and Linux with nothing installed beyond Node.js itself (no WSL, Git Bash, or Cygwin needed). CI builds and uploads the zip on Ubuntu, Windows, and macOS on every push/PR, so a platform-specific regression gets caught automatically.
+This produces `dist/wa-web-sidebar-toggle-v<version>.zip`. The build script (`scripts/build.js`) is plain Node.js — it uses the [`yazl`](https://www.npmjs.com/package/yazl) library instead of shelling out to the `zip`/`bash` CLI tools, so `npm run build` works identically on Windows, macOS, and Linux with nothing installed beyond Node.js itself (no WSL, Git Bash, or Cygwin needed). CI builds and uploads the zip on Ubuntu, Windows, and macOS on every push/PR, so a platform-specific regression gets caught automatically.
 
 ## Releasing
 
@@ -84,7 +84,7 @@ Version bumps, builds, and Chrome Web Store publishing are automated via GitHub 
 ## Project structure
 
 ```
-wa-sidebar-toggle/
+wa-web-sidebar-toggle/
 ├── manifest.json          # MV3 manifest — no permissions, one content script
 ├── package.json           # Release tooling only (chrome-webstore-upload-cli)
 ├── src/
