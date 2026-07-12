@@ -11,7 +11,7 @@
     SOCIAL_LINKS: {
       github: "https://github.com/Muhammad-Aqib-Bashir",
       x: "https://x.com/your-handle",
-      website: "https://your-website.dev",
+      website: "https://muhammadaqibbashir.netlify.app",
     },
   };
   // ───────────────────────────────────────────────────────────────
