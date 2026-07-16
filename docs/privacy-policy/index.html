@@ -4,7 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Privacy Policy — WA Web Sidebar Toggle</title>
-    <link rel="shortcut icon" href="../icons/icon64.png" type="image/x-icon" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../icons/icon16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="48x48"
+      href="../icons/icon48.png"
+    />
+    <link rel="apple-touch-icon" sizes="128x128" href="../icons/icon128.png" />
     <style>
       body {
         font-family:
@@ -51,9 +63,25 @@
     </style>
   </head>
   <body>
+    <a href="../" class="topbar-back">
+      <svg
+        viewBox="0 0 24 24"
+        width="13"
+        height="13"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Back to docs
+    </a>
     <h1>Privacy Policy</h1>
     <p class="meta">
-      WA Web Sidebar Toggle &nbsp;·&nbsp; Last updated: <span id="date"></span>
+      WA Web Sidebar Toggle &nbsp;·&nbsp; Last updated:
+      <span id="date">July 13, 2026</span>
     </p>
 
     <div class="highlight">
@@ -114,7 +142,7 @@
     <p>
       Questions? Open an issue on
       <a
-        href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle"
+        href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle/issues"
         target="_blank"
         rel="noopener noreferrer"
         >GitHub</a
@@ -124,14 +152,5 @@
         >muhammadaqibbashir.dev@gmail.com</a
       >.
     </p>
-
-    <script>
-      document.getElementById("date").textContent =
-        new Date().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-    </script>
   </body>
 </html>
