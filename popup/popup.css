@@ -74,6 +74,52 @@ a {
   color: rgba(255, 255, 255, 0.75);
 }
 
+/* ── Pin banner ───────────────────────────────────────────
+   One-time reminder to pin the extension. Chrome has no API
+   for auto-pinning — it's a user-controlled security boundary.
+   Shown only on the first popup open; dismissed state is stored
+   so it never reappears. */
+
+.pin-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fff8e7;
+  border-bottom: 1px solid #f5e0a0;
+  font-size: 11.5px;
+  color: #5a3e00;
+}
+
+.pin-banner[hidden] {
+  display: none;
+}
+
+.pin-banner-body {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pin-banner-close {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  color: #a07820;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.pin-banner-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
 /* ── Mock window (signature visual) ──────────────────────
    A miniature, looping reproduction of the actual collapse/expand the
    extension performs on web.whatsapp.com, used in place of a generic

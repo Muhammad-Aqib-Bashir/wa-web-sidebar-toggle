@@ -2,15 +2,16 @@
   "use strict";
 
   const CONFIG = {
+    CHROME_STORE_EXTENSION_ID: "kcecmmnkmpoeociooaffmimbpljdmglj",
+    DEV_NAME: "M. Aqib Bashir",
     GITHUB_REPO_URL:
       "https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle",
-    CHROME_STORE_EXTENSION_ID: "",
     BUY_ME_A_COFFEE_URL: "https://ko-fi.com/muhammadaqibbashir",
-    HIRE_URL: "https://muhammadaqibbashir.netlify.app",
-    DEV_NAME: "M. Aqib Bashir",
+    HIRE_URL: "https://www.freelancer.com/u/mAqibBashir",
     SOCIAL_LINKS: {
       github: "https://github.com/Muhammad-Aqib-Bashir",
-      x: "https://x.com/your-handle",
+      linkedin: "https://linkedin.com/in/muhammadaqibbashir-dev",
+      freelancer: "https://www.freelancer.com/u/mAqibBashir",
       website: "https://muhammadaqibbashir.netlify.app",
     },
   };
