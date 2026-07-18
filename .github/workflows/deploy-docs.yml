@@ -1,0 +1,60 @@
+name: Deploy Docs
+
+# Runs on every push to main that touches the docs or icons.
+# Builds first (which syncs icons/ → docs/icons/) then deploys
+# the /docs folder to GitHub Pages — so the site always has the
+# correct icons without you manually committing generated files.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "icons/**"
+      - "scripts/build.js"
+      - "manifest.json"
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+# Required for the pages deploy action to work
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deploy runs at a time; skip queued runs but finish in-progress ones
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (syncs icons/ → docs/icons/)
+        run: npm run build
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload docs/ as Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload only the docs/ folder — this is the website root
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
