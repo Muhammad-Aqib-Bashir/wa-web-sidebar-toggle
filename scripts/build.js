@@ -19,6 +19,7 @@ const ROOT_DIR = path.join(__dirname, "..");
 const OUT_DIR = path.join(ROOT_DIR, "dist");
 
 // Everything Chrome needs in the published extension.
+// manifest.json and background.js are single files; the rest are directories.
 const INCLUDE_PATHS = [
   "manifest.json",
   "background.js",
@@ -102,8 +103,17 @@ function build() {
   for (const includePath of INCLUDE_PATHS) {
     const realPath = path.join(ROOT_DIR, includePath);
     if (!fs.existsSync(realPath)) {
-      console.warn(`Warning: ${includePath} not found — skipping`);
-      continue;
+      // Hard error — a missing file here means the extension package will
+      // be invalid. Chrome rejects zips where manifest.json references a
+      // file that isn't present (e.g. background service_worker, content
+      // scripts, popup). Better to fail the build than ship a broken zip.
+      console.error(`Error: required path not found — ${includePath}`);
+      console.error(
+        "Make sure the file is committed to git (run: git ls-files " +
+          includePath +
+          ")",
+      );
+      process.exit(1);
     }
     // Normalise path separators to forward slashes for zip compatibility
     collectEntries(realPath, includePath.split(path.sep).join("/"), entries);
