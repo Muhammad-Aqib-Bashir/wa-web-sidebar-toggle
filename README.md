@@ -6,7 +6,7 @@ No accounts, no servers, no analytics. It touches only `web.whatsapp.com`, reque
 
 ![Manifest V3](https://img.shields.io/badge/manifest-v3-blue)
 ![Permissions](https://img.shields.io/badge/permissions-none-brightgreen)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/EXTENSION_ID.svg)](https://chromewebstore.google.com/detail/EXTENSION_ID)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/EXTENSION_ID.svg)](https://chromewebstore.google.com/detail/kcecmmnkmpoeociooaffmimbpljdmglj?utm_source=github&utm_medium=readme&utm_campaign=organic)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 
 ## Features

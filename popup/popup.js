@@ -54,7 +54,7 @@
     setLink(
       "link-review",
       CONFIG.CHROME_STORE_EXTENSION_ID
-        ? `https://chromewebstore.google.com/detail/${CONFIG.CHROME_STORE_EXTENSION_ID}/reviews`
+        ? `https://chromewebstore.google.com/detail/${CONFIG.CHROME_STORE_EXTENSION_ID}/reviews?utm_source=popup&utm_medium=extension&utm_campaign=review_prompt`
         : "",
     );
     setLink("link-hire", CONFIG.HIRE_URL);
