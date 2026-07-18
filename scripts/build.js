@@ -4,9 +4,11 @@
 // What it does:
 //   1. Reads the version from manifest.json (the single source of truth)
 //   2. Syncs icons/ → docs/icons/ so GitHub Pages can serve them as favicons
-//      (docs/ is the GitHub Pages root; icons that live at the repo root are
-//      unreachable to a browser unless copied inside docs/)
-//   3. Zips exactly the files Chrome needs into dist/wa-web-sidebar-toggle-vX.Y.Z.zip
+//   3. Collects all files Chrome needs into a zip
+//   4. Validates that every file referenced in manifest.json is actually
+//      present in the zip — fails the build if anything is missing, so a
+//      broken package can never reach the Chrome Web Store silently
+//   5. Writes dist/wa-web-sidebar-toggle-vX.Y.Z.zip
 //
 // Runs identically on Linux, macOS, and Windows — no bash, zip, or cp required.
 "use strict";
@@ -20,27 +22,20 @@ const OUT_DIR = path.join(ROOT_DIR, "dist");
 
 // Everything Chrome needs in the published extension.
 // manifest.json and background.js are single files; the rest are directories.
-const INCLUDE_PATHS = [
-  "manifest.json",
-  "background.js",
-  "src",
-  "icons",
-  "popup",
-  "welcome",
-];
+const INCLUDE_PATHS = ["manifest.json", "src", "icons", "popup", "welcome"];
 
 // Files to silently skip anywhere in the tree.
 const EXCLUDE_NAMES = new Set([".DS_Store", "Thumbs.db", "desktop.ini"]);
 
 /* ── Helpers ───────────────────────────────────────────────────── */
 
-function readManifestVersion() {
+function readManifest() {
   const manifestPath = path.join(ROOT_DIR, "manifest.json");
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
   if (!manifest.version) {
     throw new Error('manifest.json is missing a "version" field');
   }
-  return manifest.version;
+  return manifest;
 }
 
 // Recursively walks realPath and pushes [absolutePath, zipPath] tuples.
@@ -64,9 +59,7 @@ function collectEntries(realPath, zipRelativePath, entries) {
 }
 
 // Copies every file from icons/ into docs/icons/ using Node's fs so this
-// works on Windows without needing cp/rsync. docs/icons/ is the path that
-// docs/index.html and docs/privacy-policy/index.html reference as favicons
-// and logo images when served by GitHub Pages (which treats /docs as root).
+// works on Windows without needing cp/rsync.
 function syncDocIcons() {
   const srcDir = path.join(ROOT_DIR, "icons");
   const destDir = path.join(ROOT_DIR, "docs", "icons");
@@ -85,10 +78,53 @@ function syncDocIcons() {
   console.log("Synced icons/ → docs/icons/");
 }
 
+// Cross-checks that every file manifest.json references is present in the
+// zip entries we collected. Fails the build before writing the zip so a
+// broken package can never reach the Chrome Web Store.
+function validateEntries(manifest, zipEntryPaths) {
+  const inZip = new Set(zipEntryPaths);
+  const missing = [];
+
+  // background service worker
+  if (manifest.background?.service_worker) {
+    if (!inZip.has(manifest.background.service_worker)) {
+      missing.push(
+        `background.service_worker: "${manifest.background.service_worker}"`,
+      );
+    }
+  }
+
+  // content scripts
+  for (const cs of manifest.content_scripts || []) {
+    for (const f of [...(cs.js || []), ...(cs.css || [])]) {
+      if (!inZip.has(f)) missing.push(`content_scripts file: "${f}"`);
+    }
+  }
+
+  // action popup
+  if (manifest.action?.default_popup) {
+    if (!inZip.has(manifest.action.default_popup)) {
+      missing.push(`action.default_popup: "${manifest.action.default_popup}"`);
+    }
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `\nZip validation failed — manifest.json references these files\n` +
+        `but they are not in the zip (not committed to git?):\n\n` +
+        `  ${missing.join("\n  ")}\n\n` +
+        `Fix: git add <file> && git commit, then rebuild.\n`,
+    );
+  }
+
+  console.log(`Validated — all manifest-referenced files present in zip.`);
+}
+
 /* ── Main ──────────────────────────────────────────────────────── */
 
 function build() {
-  const version = readManifestVersion();
+  const manifest = readManifest();
+  const version = manifest.version;
   const outFile = path.join(OUT_DIR, `wa-web-sidebar-toggle-v${version}.zip`);
 
   // 1. Sync docs icons (cross-platform cp)
@@ -103,23 +139,25 @@ function build() {
   for (const includePath of INCLUDE_PATHS) {
     const realPath = path.join(ROOT_DIR, includePath);
     if (!fs.existsSync(realPath)) {
-      // Hard error — a missing file here means the extension package will
-      // be invalid. Chrome rejects zips where manifest.json references a
-      // file that isn't present (e.g. background service_worker, content
+      // Hard error — a missing file means the extension package will be
+      // invalid. Chrome rejects zips where manifest.json references a
+      // file that isn't present (background service_worker, content
       // scripts, popup). Better to fail the build than ship a broken zip.
-      console.error(`Error: required path not found — ${includePath}`);
-      console.error(
-        "Make sure the file is committed to git (run: git ls-files " +
-          includePath +
-          ")",
+      throw new Error(
+        `Required path not found: ${includePath}\n` +
+          `Make sure it is committed to git: git ls-files ${includePath}`,
       );
-      process.exit(1);
     }
-    // Normalise path separators to forward slashes for zip compatibility
     collectEntries(realPath, includePath.split(path.sep).join("/"), entries);
   }
 
-  // 4. Write the zip
+  // 4. Validate before writing — check every manifest reference is present
+  validateEntries(
+    manifest,
+    entries.map(([, zipPath]) => zipPath),
+  );
+
+  // 5. Write the zip
   const zipfile = new yazl.ZipFile();
   for (const [realPath, zipRelativePath] of entries) {
     zipfile.addFile(realPath, zipRelativePath);
@@ -139,9 +177,9 @@ build()
   .then((outFile) => {
     const rel = path.relative(ROOT_DIR, outFile);
     const size = (fs.statSync(outFile).size / 1024).toFixed(1);
-    console.log(`Built ${rel} (${size} KB)`);
+    console.log(`\nBuilt ${rel} (${size} KB)`);
   })
   .catch((err) => {
-    console.error("Build failed:", err.message);
+    console.error("\nBuild failed:", err.message);
     process.exit(1);
   });
