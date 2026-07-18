@@ -28,34 +28,20 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://web.whatsapp.com/*"
-      ],
-      "js": [
-        "src/content.js"
-      ],
-      "css": [
-        "src/content.css"
-      ],
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["src/content.js"],
+      "css": ["src/content.css"],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "welcome/welcome.html"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["welcome/welcome.html"],
+      "matches": ["<all_urls>"]
     }
   ],
-  "permissions": [
-    "storage"
-  ],
-  "host_permissions": [
-    "https://web.whatsapp.com/*"
-  ],
+  "permissions": ["storage"],
+  "host_permissions": ["https://web.whatsapp.com/*"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   }

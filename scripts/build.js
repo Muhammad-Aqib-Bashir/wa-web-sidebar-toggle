@@ -22,7 +22,14 @@ const OUT_DIR = path.join(ROOT_DIR, "dist");
 
 // Everything Chrome needs in the published extension.
 // manifest.json and background.js are single files; the rest are directories.
-const INCLUDE_PATHS = ["manifest.json", "src", "icons", "popup", "welcome"];
+const INCLUDE_PATHS = [
+  "manifest.json",
+  "src",
+  "icons",
+  "popup",
+  "welcome",
+  "background.js",
+];
 
 // Files to silently skip anywhere in the tree.
 const EXCLUDE_NAMES = new Set([".DS_Store", "Thumbs.db", "desktop.ini"]);
