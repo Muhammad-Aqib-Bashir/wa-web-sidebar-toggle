@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WA Web Sidebar Toggle",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Hide or show the WhatsApp Web sidebar with one click or Alt+S distraction-free chats, clean screen sharing and multi-tasking.",
   "icons": {
     "16": "icons/icon16.png",
