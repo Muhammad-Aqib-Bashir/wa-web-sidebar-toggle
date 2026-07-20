@@ -3,18 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WhatsApp Web Sidebar Toggle Chrome Extension</title>
+    <title>
+      Hide WhatsApp Web Sidebar - Free Chrome Extension | Alt+S Toggle
+    </title>
     <meta
       name="description"
-      content="A free Chrome extension that hides the WhatsApp Web sidebar with one click or Alt+S. Distraction-free chats, private screen sharing."
+      content="Hide the WhatsApp Web sidebar and chat list with one click or Alt+S. Free, open-source Chrome extension for distraction-free chatting and private screen sharing. No permissions, no tracking."
     />
     <meta
       property="og:title"
-      content="WhatsApp Web Sidebar Toggle Chrome Extension"
+      content="Hide WhatsApp Web Sidebar - Free Chrome Extension"
     />
     <meta
       property="og:description"
-      content="Hide the WhatsApp Web sidebar with one click. Free Chrome extension."
+      content="Hide the WhatsApp Web sidebar and chat list with one click or Alt+S. Free, open-source, zero permissions."
     />
     <meta property="og:type" content="website" />
     <meta
@@ -23,6 +25,19 @@
     />
     <meta
       property="og:image"
+      content="https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle/icons/icon128.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Hide WhatsApp Web Sidebar - Free Chrome Extension"
+    />
+    <meta
+      name="twitter:description"
+      content="Hide the WhatsApp Web sidebar with one click or Alt+S. Free Chrome extension, zero permissions, open source."
+    />
+    <meta
+      name="twitter:image"
       content="https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle/icons/icon128.png"
     />
     <link rel="icon" type="image/png" sizes="16x16" href="icons/icon16.png" />
@@ -37,6 +52,78 @@
       name="google-site-verification"
       content="b5u1dbb1Fe77AFuDYEVjuFqZe6uXr1ec8IaFVAgKizY"
     />
+
+    <!-- Structured data: software product -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "WA Web Sidebar Toggle",
+        "applicationCategory": "BrowserApplication",
+        "operatingSystem": "Chrome",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "url": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle",
+        "description": "Hide the WhatsApp Web sidebar and chat list with one click or Alt+S.",
+        "softwareVersion": "0.2.0",
+        "author": {
+          "@type": "Person",
+          "name": "Muhammad Aqib Bashir",
+          "url": "https://muhammadaqibbashir.netlify.app",
+          "sameAs": ["https://github.com/Muhammad-Aqib-Bashir"]
+        }
+      }
+    </script>
+
+    <!-- Structured data: FAQ (mirrors the #faq section below) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I hide the sidebar on WhatsApp Web?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Install WA Web Sidebar Toggle from the Chrome Web Store, open web.whatsapp.com, and click the toggle button in the navigation rail, or press Alt+S. The chat list, contact names, and unread counts collapse instantly."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I hide my WhatsApp Web chat list before screen sharing?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Press Alt+S right before you start a screen share to collapse the sidebar, hiding contact names and message previews from viewers. Press it again afterward to restore your chats."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is there a keyboard shortcut to hide WhatsApp Web contacts?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Alt+S toggles the sidebar from anywhere on WhatsApp Web, no click required. It's also listed in WhatsApp's own shortcuts reference, opened with Ctrl+/."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this extension read my WhatsApp messages?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. It requests no permissions beyond web.whatsapp.com, makes no network requests, and cannot read messages, contacts, or any WhatsApp content. The source code is open and MIT licensed."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does hiding the sidebar work on every WhatsApp Web tab?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, Chats, Status, Communities, and Settings all behave the same way. Switching between them won't pop the sidebar back open."
+            }
+          }
+        ]
+      }
+    </script>
+
     <style>
       /* ── Tokens ─────────────────────────────────────────────────── */
       :root {
@@ -301,7 +388,7 @@
         background: var(--teal-deep);
       }
 
-      /* The sidebar panel is hidden — no mock-panel shown, just a thin
+      /* The sidebar panel is hidden, no mock-panel shown, just a thin
        divider line where it would be, to communicate "collapsed". */
       .mock-collapsed-hint {
         width: 3px;
@@ -708,6 +795,35 @@
         margin: 0;
       }
 
+      /* ── FAQ ──────────────────────────────────────────────────────── */
+      .faq {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .faq-item {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px 24px;
+      }
+
+      .faq-item h3 {
+        font-size: 14.5px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: var(--ink);
+      }
+
+      .faq-item p {
+        font-size: 13.5px;
+        color: var(--ink-2);
+        margin: 0;
+        max-width: none;
+      }
+
       /* ── Changelog ────────────────────────────────────────────────── */
       .changelog {
         margin-top: 24px;
@@ -1024,10 +1140,10 @@
     <section class="hero">
       <div class="hero-text">
         <p class="hero-eyebrow">Free Chrome Extension</p>
-        <h1>Hide the sidebar.<br /><em>Focus on one chat.</em></h1>
+        <h1>Hide the WhatsApp Web Sidebar.<br /><em>Focus on one chat.</em></h1>
         <p class="hero-sub">
-          One button collapses the entire WhatsApp Web sidebar — chat list,
-          unread counts, contact names — so you can finish what you're doing
+          One button collapses the entire WhatsApp Web sidebar, chat list,
+          unread counts, contact names, so you can finish what you're doing
           without your inbox competing for attention.
         </p>
         <div class="hero-actions">
@@ -1111,7 +1227,7 @@
               </defs>
             </svg>
 
-            Add to Chrome — it's free
+            Add to Chrome. It's free.
           </a>
           <a
             href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle"
@@ -1183,6 +1299,7 @@
       <a href="#usage">Usage</a>
       <a href="#shortcut">Keyboard shortcut</a>
       <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
       <a href="#changelog">Changelog</a>
       <a href="privacy-policy/">Privacy policy</a>
     </div>
@@ -1370,7 +1487,7 @@
                 style="color: var(--teal-deep); font-weight: 600"
                 >web.whatsapp.com</a
               >
-              — the toggle button appears in the navigation rail automatically
+              , the toggle button appears in the navigation rail automatically
               within a second.
             </p>
           </div>
@@ -1436,13 +1553,13 @@
       <p class="section-label">Usage</p>
       <h2>How to use it</h2>
       <p>
-        The toggle button appears in WhatsApp's navigation rail — the narrow
-        icon strip on the far left. It lives between the Communities button and
-        the Settings button.
+        The toggle button appears in WhatsApp's navigation rail, the narrow icon
+        strip on the far left. It lives between the Communities button and the
+        Settings button.
       </p>
       <p>
         Click it once to collapse the sidebar. Click again to restore it. Your
-        choice persists for the current browser session — reopening the tab
+        choice persists for the current browser session, reopening the tab
         starts fresh with the sidebar visible.
       </p>
       <p>
@@ -1457,8 +1574,8 @@
       <p class="section-label">Keyboard shortcut</p>
       <h2>Keep your hands on the keyboard</h2>
       <p>
-        The shortcut works anywhere on web.whatsapp.com — you don't need to
-        click the button.
+        The shortcut works anywhere on web.whatsapp.com, you don't need to click
+        the button.
       </p>
 
       <div class="shortcut-row">
@@ -1474,7 +1591,7 @@
 
       <p style="margin-top: 20px; font-size: 13.5px; color: var(--ink-soft)">
         The shortcut is also listed in WhatsApp's own built-in keyboard
-        reference — press <kbd>Ctrl</kbd> + <kbd>/</kbd> inside WhatsApp Web to
+        reference, press <kbd>Ctrl</kbd> + <kbd>/</kbd> inside WhatsApp Web to
         see it alongside WhatsApp's native shortcuts.
       </p>
     </section>
@@ -1570,6 +1687,55 @@
       </p>
     </section>
 
+    <!-- ── FAQ ────────────────────────────────────────────────────────── -->
+    <section class="section" id="faq">
+      <p class="section-label">FAQ</p>
+      <h2>Common questions</h2>
+
+      <div class="faq">
+        <div class="faq-item">
+          <h3>How do I hide the sidebar on WhatsApp Web?</h3>
+          <p>
+            Install WA Web Sidebar Toggle from the Chrome Web Store, open
+            web.whatsapp.com, and click the toggle button in the navigation rail
+            , or press Alt+S. The chat list, contact names, and unread counts
+            collapse instantly.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I hide my WhatsApp Web chat list before screen sharing?</h3>
+          <p>
+            Yes. Press Alt+S right before you start a screen share to collapse
+            the sidebar, hiding contact names and message previews from viewers.
+            Press it again afterward to restore your chats.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Is there a keyboard shortcut to hide WhatsApp Web contacts?</h3>
+          <p>
+            Alt+S toggles the sidebar from anywhere on WhatsApp Web, no click
+            required. It's also listed in WhatsApp's own shortcuts reference —
+            open it with Ctrl+/.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Does this extension read my WhatsApp messages?</h3>
+          <p>
+            No. It requests no permissions beyond web.whatsapp.com, makes no
+            network requests, and cannot read messages, contacts, or any
+            WhatsApp content. The source code is open and MIT licensed.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Does hiding the sidebar work on every WhatsApp Web tab?</h3>
+          <p>
+            Yes, Chats, Status, Communities, and Settings all behave the same
+            way. Switching between them won't pop the sidebar back open.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Changelog ──────────────────────────────────────────────────── -->
     <section class="section" id="changelog">
       <p class="section-label">Changelog</p>
@@ -1646,8 +1812,7 @@
               <li>
                 <span class="release-tag tag-fixed">Fixed</span>Replaced
                 unreliable <code>#side</code> targeting with structural nav-rail
-                detection — now works on Chats, Status, Communities, and
-                Settings
+                detection, now works on Chats, Status, Communities, and Settings
               </li>
               <li>
                 <span class="release-tag tag-fixed">Fixed</span>MutationObserver
@@ -1765,7 +1930,7 @@
               </clipPath>
             </defs>
           </svg>
-          Add to Chrome — It's free
+          Add to Chrome. It's free.
         </a>
         <a
           href="https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle"
@@ -1781,7 +1946,7 @@
     <!-- ── Footer ─────────────────────────────────────────────────────── -->
     <footer>
       <span
-        >WA Web Sidebar Toggle — built by
+        >WA Web Sidebar Toggle, built by
         <a
           href="https://muhammadaqibbashir.netlify.app"
           target="_blank"
