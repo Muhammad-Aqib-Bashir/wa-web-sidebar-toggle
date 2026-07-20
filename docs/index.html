@@ -11,10 +11,6 @@
       content="Hide the WhatsApp Web sidebar and chat list with one click or Alt+S. Free, open-source Chrome extension for distraction-free chatting and private screen sharing. No permissions, no tracking."
     />
     <meta
-      name="keywords"
-      content="hide whatsapp web sidebar, whatsapp web chrome extension, whatsapp web hide chat list, whatsapp web privacy extension, whatsapp web screen share privacy, whatsapp web keyboard shortcut, collapse whatsapp web sidebar, whatsapp web focus mode"
-    />
-    <meta
       property="og:title"
       content="Hide WhatsApp Web Sidebar - Free Chrome Extension"
     />
@@ -44,6 +40,10 @@
       name="twitter:image"
       content="https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle/icons/icon128.png"
     />
+    <meta
+      name="keywords"
+      content="hide whatsapp web sidebar, whatsapp web chrome extension, whatsapp web hide chat list, whatsapp web privacy extension, whatsapp web screen share privacy, whatsapp web keyboard shortcut, collapse whatsapp web sidebar, whatsapp web focus mode"
+    />
     <link rel="icon" type="image/png" sizes="16x16" href="icons/icon16.png" />
     <link rel="icon" type="image/png" sizes="48x48" href="icons/icon48.png" />
     <link rel="apple-touch-icon" sizes="128x128" href="icons/icon128.png" />
@@ -68,12 +68,15 @@
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "url": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle",
         "description": "Hide the WhatsApp Web sidebar and chat list with one click or Alt+S.",
-        "softwareVersion": "0.2.0",
+        "softwareVersion": "0.2.5",
         "author": {
           "@type": "Person",
           "name": "Muhammad Aqib Bashir",
           "url": "https://muhammadaqibbashir.netlify.app",
-          "sameAs": ["https://github.com/Muhammad-Aqib-Bashir"]
+          "sameAs": [
+            "https://github.com/Muhammad-Aqib-Bashir",
+            "https://www.upwork.com/freelancers/~muhammadaqibbashir"
+          ]
         }
       }
     </script>
@@ -125,6 +128,20 @@
             }
           }
         ]
+      }
+    </script>
+
+    <!-- Structured data: demo video -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": "WA Web Sidebar Toggle demo",
+        "description": "Screen recording showing the WhatsApp Web sidebar being hidden and restored with one click.",
+        "thumbnailUrl": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle/icons/icon128.png",
+        "uploadDate": "2026-07-20",
+        "contentUrl": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle/video-demo.mp4",
+        "duration": "PT3S"
       }
     </script>
 
@@ -344,9 +361,21 @@
         flex-shrink: 0;
       }
 
+      .hero-video {
+        width: 480px;
+        object-fit: cover;
+        border-radius: var(--radius-lg);
+        box-shadow:
+          0 24px 64px rgba(0, 0, 0, 0.4),
+          0 0 0 1px rgba(255, 255, 255, 0.06);
+        background: #0b141a;
+        display: block;
+        border: 10px solid var(--teal);
+      }
+
       .mock-app {
-        width: 340px;
-        height: 230px;
+        width: 480px;
+        height: 320px;
         background: #0b141a;
         border-radius: var(--radius-lg);
         overflow: hidden;
@@ -941,6 +970,10 @@
         background: #dbeafe;
         color: #1e40af;
       }
+      .tag-changed {
+        background: #ede9fe;
+        color: #5b21b6;
+      }
 
       /* ── CTA band ─────────────────────────────────────────────────── */
       .cta-band {
@@ -1249,50 +1282,18 @@
         </div>
       </div>
 
-      <!-- Mock WhatsApp UI showing sidebar in the collapsed state -->
+      <!-- Real screen recording showing the sidebar-hide toggle in action -->
       <div class="hero-demo" aria-hidden="true">
-        <div class="mock-app">
-          <div class="mock-rail-bar">
-            <div class="mock-avatar"></div>
-            <div class="mock-dot"></div>
-            <div class="mock-dot"></div>
-            <div class="mock-dot highlight"></div>
-            <div class="mock-dot active"></div>
-            <div class="mock-dot"></div>
-          </div>
-          <div class="mock-collapsed-hint"></div>
-          <div class="mock-chat">
-            <div class="mock-chat-header">
-              <div class="mock-chat-avatar"></div>
-              <div>
-                <div class="mock-chat-name"></div>
-                <div class="mock-chat-status"></div>
-              </div>
-            </div>
-            <div class="mock-messages">
-              <div class="mock-msg in wide"></div>
-              <div class="mock-msg out"></div>
-              <div class="mock-msg in short"></div>
-              <div class="mock-msg out wide"></div>
-              <div class="mock-msg in"></div>
-            </div>
-            <div style="text-align: center; padding: 10px 0 14px">
-              <span class="mock-badge">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="10"
-                  height="10"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Sidebar hidden
-              </span>
-            </div>
-          </div>
-        </div>
+        <video
+          class="hero-video"
+          src="video-demo.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+          disablepictureinpicture
+          controls
+        ></video>
       </div>
     </section>
 
@@ -1937,8 +1938,7 @@
               <li>
                 <span class="release-tag tag-fixed">Fixed</span>Replaced
                 unreliable <code>#side</code> targeting with structural nav-rail
-                detection — now works on Chats, Status, Communities, and
-                Settings
+                detection, now works on Chats, Status, Communities, and Settings
               </li>
               <li>
                 <span class="release-tag tag-fixed">Fixed</span>MutationObserver
