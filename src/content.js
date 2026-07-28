@@ -92,8 +92,7 @@
   // finally to English if we don't have a translation yet.
   function t(key) {
     const lang = getWALang();
-    const dict =
-      I18N[lang] || I18N[lang.split("-")[0]] || I18N.en;
+    const dict = I18N[lang] || I18N[lang.split("-")[0]] || I18N.en;
     return dict[key] || I18N.en[key];
   }
 
@@ -490,6 +489,12 @@
 
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
+        // Match WhatsApp's own nav-rail buttons: a click dismisses the
+        // tooltip immediately instead of leaving it stuck open until the
+        // pointer physically leaves the button. mouseenter/mouseleave keep
+        // working as normal afterwards, so hovering away and back in shows
+        // it again the usual way.
+        Tooltip.hide();
         Sidebar.toggle();
       });
 

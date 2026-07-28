@@ -4,7 +4,14 @@ All notable changes to this project will be documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.1] — 2026-07-28
+
+### Fixed
+
+- Tooltip on the toggle button stayed open after a click instead of
+  dismissing immediately, unlike WhatsApp's own nav-rail buttons (Chats,
+  Status, etc.) — it now hides on click and reappears normally the next
+  time the pointer leaves and re-enters the button
 
 ## [0.3.0] — 2026-07-28
 
