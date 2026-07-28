@@ -18,6 +18,7 @@ No accounts, no servers, no analytics. It touches only `web.whatsapp.com`, reque
 - **Accessible** — full ARIA support (`aria-label`, `aria-pressed`), keyboard focusable, visible focus ring
 - **Dark mode aware** — adapts to WhatsApp Web's light and dark themes automatically
 - **Non-intrusive** — injects a single button that matches WhatsApp Web's native design language
+- **Multi-language support** — the tooltip and shortcut-modal label follow whatever language WhatsApp Web itself is displaying in (66 languages), not just the browser's language
 
 ---
 
@@ -105,9 +106,21 @@ wa-web-sidebar-toggle/
     └── PUBLISHING.md         # Chrome Web Store credential setup + release flow
 ```
 
+## Language support
+
+The toggle button's tooltip, its `aria-label`, and the row this extension adds to WhatsApp's own **Keyboard shortcuts** modal are all localized. Rather than reading the browser's language, the extension reads WhatsApp Web's own `<html lang="...">` attribute — the language WhatsApp itself is set to — so it matches what's actually on screen even if Chrome's UI language is different.
+
+Currently supported (66 languages): English, Spanish, Portuguese, Italian, French, German, Dutch, Polish, Turkish, Russian, Arabic, Hindi, Indonesian, Vietnamese, Thai, Korean, Japanese, Chinese (Simplified & Traditional), Urdu, Farsi/Persian, Greek, Hungarian, Czech, Ukrainian, Hebrew, Bengali, Punjabi, Gujarati, Marathi, Tamil, Telugu, Kannada, Malayalam, Sinhala, Nepali, Malay, Filipino/Tagalog, Khmer, Lao, Burmese, Swahili, Amharic, Romanian, Bulgarian, Croatian, Serbian, Slovak, Slovenian, Swedish, Norwegian, Danish, Finnish, Estonian, Latvian, Lithuanian, Georgian, Armenian, Azerbaijani, Kazakh, Mongolian, Catalan, Basque, Galician, Afrikaans, Zulu.
+
+If a language isn't in the list yet, the tooltip falls back to English rather than showing blank/broken text. Adding a new one is a single line in the `I18N` object in `src/content.js`:
+
+```js
+sv: { toggle: "Växla sidofält" }, // Swedish
+```
+
 ## Known limitations
 
-- Selectors like `button[aria-label="Chats"]` assume an English UI; non-English WhatsApp locales may not be detected.
+- The `aria-label`/tooltip fall back to English for any WhatsApp language not yet in the `I18N` dictionary above.
 
 ## Contributing
 

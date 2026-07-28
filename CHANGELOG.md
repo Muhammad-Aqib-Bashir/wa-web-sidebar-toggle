@@ -6,6 +6,32 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-07-28
+
+### Added
+
+- Multi-language support (66 languages) for the toggle button's tooltip,
+  its `aria-label`, and the row injected into WhatsApp's native
+  _Keyboard shortcuts_ modal — driven by WhatsApp Web's own
+  `document.documentElement.lang`, not the browser's language, so it
+  matches what's actually shown on screen
+- `I18N` dictionary in `src/content.js`, with graceful fallback to the
+  base language code (e.g. `pt-BR` → `pt`) and finally to English for
+  any language not yet translated
+
+### Fixed
+
+- Toggle button silently failed to inject on any non-English WhatsApp
+  Web locale (reported on Italian): the injection anchor selector
+  (`button[aria-label="Chats"]`) only ever matched the English label, so
+  the button never appeared at all once WhatsApp's UI language changed.
+  Injection now falls back to the language-independent
+  `button[data-navbar-item="true"]` attribute when the English label
+  isn't present.
+- Nav-rail detection heuristic (`navLabels`) was English/Spanish only;
+  broadened alongside the language work so it isn't the false negative
+  it used to be on other locales
+
 ## [0.2.0] — 2025-07-01
 
 ### Added

@@ -15,25 +15,72 @@
   // Add more entries here to support additional WhatsApp languages - every
   // string in this file that's user-facing should be pulled through t().
   const I18N = {
-    en: { toggle: "Toggle sidebar" },
-    es: { toggle: "Alternar barra lateral" },
-    pt: { toggle: "Alternar barra lateral" },
-    it: { toggle: "Attiva/disattiva barra laterale" },
-    fr: { toggle: "Afficher/masquer la barre latérale" },
-    de: { toggle: "Seitenleiste umschalten" },
-    nl: { toggle: "Zijbalk in-/uitschakelen" },
-    pl: { toggle: "Przełącz pasek boczny" },
-    tr: { toggle: "Kenar çubuğunu aç/kapat" },
-    ru: { toggle: "Переключить боковую панель" },
-    ar: { toggle: "تبديل الشريط الجانبي" },
-    hi: { toggle: "साइडबार टॉगल करें" },
-    id: { toggle: "Alihkan bilah sisi" },
-    vi: { toggle: "Bật/tắt thanh bên" },
-    th: { toggle: "สลับแถบด้านข้าง" },
-    ko: { toggle: "사이드바 전환" },
-    ja: { toggle: "サイドバーを切り替え" },
-    "zh-cn": { toggle: "切换侧边栏" },
-    "zh-tw": { toggle: "切換側邊欄" },
+    en: { toggle: "Toggle sidebar" }, // English
+    es: { toggle: "Alternar barra lateral" }, // Spanish
+    pt: { toggle: "Alternar barra lateral" }, // Portuguese
+    it: { toggle: "Attiva/disattiva barra laterale" }, // Italian
+    fr: { toggle: "Afficher/masquer la barre latérale" }, // French
+    de: { toggle: "Seitenleiste umschalten" }, // German
+    nl: { toggle: "Zijbalk in-/uitschakelen" }, // Dutch
+    pl: { toggle: "Przełącz pasek boczny" }, // Polish
+    tr: { toggle: "Kenar çubuğunu aç/kapat" }, // Turkish
+    ru: { toggle: "Переключить боковую панель" }, // Russian
+    ar: { toggle: "تبديل الشريط الجانبي" }, // Arabic
+    hi: { toggle: "साइडबार टॉगल करें" }, // Hindi
+    id: { toggle: "Alihkan bilah sisi" }, // Indonesian
+    vi: { toggle: "Bật/tắt thanh bên" }, // Vietnamese
+    th: { toggle: "สลับแถบด้านข้าง" }, // Thai
+    ko: { toggle: "사이드바 전환" }, // Korean
+    ja: { toggle: "サイドバーを切り替え" }, // Japanese
+    "zh-cn": { toggle: "切换侧边栏" }, // Chinese (Simplified)
+    "zh-tw": { toggle: "切換側邊欄" }, // Chinese (Traditional)
+    ur: { toggle: "سائیڈ بار ٹوگل کریں" }, // Urdu
+    fa: { toggle: "تغییر نوار کناری" }, // Farsi / Persian
+    el: { toggle: "Εναλλαγή πλαϊνής γραμμής" }, // Greek
+    hu: { toggle: "Oldalsáv be- és kikapcsolása" }, // Hungarian
+    cs: { toggle: "Přepnout postranní panel" }, // Czech
+    uk: { toggle: "Перемкнути бічну панель" }, // Ukrainian
+    he: { toggle: "החלפת סרגל צד" }, // Hebrew
+    bn: { toggle: "সাইডবার টগল করুন" }, // Bengali
+    pa: { toggle: "ਸਾਈਡਬਾਰ ਬਦਲੋ" }, // Punjabi
+    gu: { toggle: "સાઇડબાર ટૉગલ કરો" }, // Gujarati
+    mr: { toggle: "साइडबार टॉगल करा" }, // Marathi
+    ta: { toggle: "பக்கப்பட்டியை மாற்று" }, // Tamil
+    te: { toggle: "సైడ్‌బార్‌ను టోగుల్ చేయండి" }, // Telugu
+    kn: { toggle: "ಸೈಡ್‌ಬಾರ್ ಟಾಗಲ್ ಮಾಡಿ" }, // Kannada
+    ml: { toggle: "സൈഡ്ബാർ ടോഗിൾ ചെയ്യുക" }, // Malayalam
+    si: { toggle: "පැති තීරුව මාරු කරන්න" }, // Sinhala
+    ne: { toggle: "साइडबार टगल गर्नुहोस्" }, // Nepali
+    ms: { toggle: "Togol bar sisi" }, // Malay
+    tl: { toggle: "I-toggle ang side bar" }, // Filipino / Tagalog
+    km: { toggle: "បិទ/បើក របារចំហៀង" }, // Khmer
+    lo: { toggle: "ສະຫຼັບແຖບຂ້າງ" }, // Lao
+    my: { toggle: "ဘေးဘား ပြောင်းရန်" }, // Burmese
+    sw: { toggle: "Geuza upau wa kando" }, // Swahili
+    am: { toggle: "የጎን አሞሌን ቀይር" }, // Amharic
+    ro: { toggle: "Comută bara laterală" }, // Romanian
+    bg: { toggle: "Превключване на страничната лента" }, // Bulgarian
+    hr: { toggle: "Uklj./isklj. bočnu traku" }, // Croatian
+    sr: { toggle: "Укључи/искључи бочну траку" }, // Serbian
+    sk: { toggle: "Prepnúť bočný panel" }, // Slovak
+    sl: { toggle: "Preklopi stransko vrstico" }, // Slovenian
+    sv: { toggle: "Växla sidofält" }, // Swedish
+    nb: { toggle: "Veksle sidefelt" }, // Norwegian
+    da: { toggle: "Skift sidepanel" }, // Danish
+    fi: { toggle: "Vaihda sivupalkki" }, // Finnish
+    et: { toggle: "Lülita külgriba" }, // Estonian
+    lv: { toggle: "Pārslēgt sānjoslu" }, // Latvian
+    lt: { toggle: "Perjungti šoninę juostą" }, // Lithuanian
+    ka: { toggle: "გვერდითი პანელის გადართვა" }, // Georgian
+    hy: { toggle: "Փոխարկել կողային վահանակը" }, // Armenian
+    az: { toggle: "Yan paneli dəyişdirin" }, // Azerbaijani
+    kk: { toggle: "Бүйір панелін ауыстыру" }, // Kazakh
+    mn: { toggle: "Хажуугийн самбарыг сэлгэх" }, // Mongolian
+    ca: { toggle: "Alterna la barra lateral" }, // Catalan
+    eu: { toggle: "Albo-barra aldatu" }, // Basque
+    gl: { toggle: "Alternar a barra lateral" }, // Galician
+    af: { toggle: "Wissel kantbalk" }, // Afrikaans
+    zu: { toggle: "Guqula ibha yohlangothi" }, // Zulu
   };
 
   function getWALang() {
@@ -45,7 +92,8 @@
   // finally to English if we don't have a translation yet.
   function t(key) {
     const lang = getWALang();
-    const dict = I18N[lang] || I18N[lang.split("-")[0]] || I18N.en;
+    const dict =
+      I18N[lang] || I18N[lang.split("-")[0]] || I18N.en;
     return dict[key] || I18N.en[key];
   }
 
@@ -598,7 +646,9 @@
       inject();
       Sidebar.reassert();
       ShortcutsModal.inject();
-      if (!DOM.getToggleButton()) Tooltip.hide();
+      const btn = DOM.getToggleButton();
+      if (btn) btn.setAttribute("aria-label", t("toggle"));
+      if (!btn) Tooltip.hide();
     };
     const scheduleSync = () => {
       if (frame) return;
