@@ -6,6 +6,49 @@
    * ────────────────────────────────────────────── */
   const EXT = "wa-web-sidebar-toggle";
 
+  /* ──────────────────────────────────────────────
+   * I18N
+   * ────────────────────────────────────────────── */
+  // WhatsApp Web sets <html lang="..."> to whichever language the user has
+  // it configured in (independent of the browser's own UI language), so we
+  // read that instead of navigator.language to match what's on screen.
+  // Add more entries here to support additional WhatsApp languages - every
+  // string in this file that's user-facing should be pulled through t().
+  const I18N = {
+    en: { toggle: "Toggle sidebar" },
+    es: { toggle: "Alternar barra lateral" },
+    pt: { toggle: "Alternar barra lateral" },
+    it: { toggle: "Attiva/disattiva barra laterale" },
+    fr: { toggle: "Afficher/masquer la barre latérale" },
+    de: { toggle: "Seitenleiste umschalten" },
+    nl: { toggle: "Zijbalk in-/uitschakelen" },
+    pl: { toggle: "Przełącz pasek boczny" },
+    tr: { toggle: "Kenar çubuğunu aç/kapat" },
+    ru: { toggle: "Переключить боковую панель" },
+    ar: { toggle: "تبديل الشريط الجانبي" },
+    hi: { toggle: "साइडबार टॉगल करें" },
+    id: { toggle: "Alihkan bilah sisi" },
+    vi: { toggle: "Bật/tắt thanh bên" },
+    th: { toggle: "สลับแถบด้านข้าง" },
+    ko: { toggle: "사이드바 전환" },
+    ja: { toggle: "サイドバーを切り替え" },
+    "zh-cn": { toggle: "切换侧边栏" },
+    "zh-tw": { toggle: "切換側邊欄" },
+  };
+
+  function getWALang() {
+    return (document.documentElement.lang || "en").toLowerCase();
+  }
+
+  // Looks up a string for whatever language WhatsApp is currently
+  // displaying in, falling back base-language (e.g. "pt-br" -> "pt") and
+  // finally to English if we don't have a translation yet.
+  function t(key) {
+    const lang = getWALang();
+    const dict = I18N[lang] || I18N[lang.split("-")[0]] || I18N.en;
+    return dict[key] || I18N.en[key];
+  }
+
   const CONFIG = {
     EXT: EXT,
     BTN_ID: `${EXT}-btn`,
@@ -14,7 +57,6 @@
     NAVBAR_CLASS: `${EXT}-navbar`,
     COLLAPSED_CLASS: `${EXT}-collapsed`,
     SHORTCUT_ROW_ID: `${EXT}-shortcut-row`,
-    SHORTCUT_LABEL: "Toggle sidebar",
     SHORTCUT_KEYS: ["Alt", "S"],
     EASE: "cubic-bezier(0.4, 0, 0.2, 1)",
     COLLAPSE_MS: 400,
@@ -52,6 +94,13 @@
         "Canales",
         "Settings",
         "Profile",
+        // Italian
+        "Chat",
+        "Stato",
+        "Comunità",
+        "Canali",
+        "Impostazioni",
+        "Profilo",
       ],
       // Elements that sit *outside* the collapsible .x18dvir5 slots (e.g.
       // sticky/independent header bars above the chat list) so collapsing
@@ -375,7 +424,7 @@
       btn.type = "button";
       btn.setAttribute("tabindex", "0");
       btn.setAttribute("data-navbar-item", "true");
-      btn.setAttribute("aria-label", "Toggle Sidebar");
+      btn.setAttribute("aria-label", t("toggle"));
       btn.className =
         "xjb2p0i xk390pu x1heor9g x1ypdohk xjbqb8w x972fbf x10w94by x1qhh985 x14e42zd xtnn1bt x9v5kkp xmw7ebm xrdum7p xt8t1vi x1xc408v x129tdwq x15urzxu xh8yej3 x1y1aw1k xf159sx xwib8y2 xmzvs34";
 
@@ -396,11 +445,9 @@
         Sidebar.toggle();
       });
 
-      btn.addEventListener("mouseenter", () =>
-        Tooltip.show(btn, "Toggle Sidebar"),
-      );
+      btn.addEventListener("mouseenter", () => Tooltip.show(btn, t("toggle")));
       btn.addEventListener("mouseleave", () => Tooltip.hide());
-      btn.addEventListener("focus", () => Tooltip.show(btn, "Toggle Sidebar"));
+      btn.addEventListener("focus", () => Tooltip.show(btn, t("toggle")));
       btn.addEventListener("blur", () => Tooltip.hide());
 
       span.appendChild(btn);
@@ -458,7 +505,7 @@
 
       const label = document.createElement("div");
       label.className = "x1iyjqo2 x1sa5p1d x6ikm8r x10wlt62 x1f6kntn x1m1tpaw";
-      label.textContent = CONFIG.SHORTCUT_LABEL;
+      label.textContent = t("toggle");
 
       const keysOuter = document.createElement("div");
       keysOuter.className = "x1iyjqo2 xp4054r";
@@ -504,9 +551,18 @@
   function inject() {
     if (DOM.getToggleButton()) return false;
 
-    const chatsBtn = document.querySelector(CONFIG.SELECTORS.chatsBtn);
+    // aria-label="Chats" only matches when WhatsApp Web's UI language is
+    // English - on any other locale (Italian, French, German, etc.) that
+    // label is translated and this selector silently finds nothing, which
+    // means the toggle button never gets injected at all. Fall back to the
+    // first nav-rail item via the language-independent data-navbar-item
+    // attribute so injection works regardless of the user's WhatsApp
+    // language setting.
+    const chatsBtn =
+      document.querySelector(CONFIG.SELECTORS.chatsBtn) ||
+      document.querySelector(CONFIG.SELECTORS.navButtons);
     if (!chatsBtn) {
-      log("Chats button not ready");
+      log("nav bar not ready");
       return false;
     }
 
