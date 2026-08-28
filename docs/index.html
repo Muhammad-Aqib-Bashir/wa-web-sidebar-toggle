@@ -3,20 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Hide WhatsApp Web Sidebar - Free Chrome Extension | Alt+S Toggle
-    </title>
+    <title>WhatsApp Web Sidebar Toggle — Hide the Chat List</title>
     <meta
       name="description"
-      content="Hide the WhatsApp Web sidebar and chat list with one click or Alt+S. Free, open-source Chrome extension for distraction-free chatting and private screen sharing. No permissions, no tracking."
+      content="Hide the left sidebar and chat list in WhatsApp Web with one click or Alt+S. Keep one conversation full-width, reduce distractions, or hide your other chats before screen sharing."
     />
     <meta
       property="og:title"
-      content="Hide WhatsApp Web Sidebar - Free Chrome Extension"
+      content="WhatsApp Web Sidebar Toggle — Hide the Chat List"
     />
     <meta
       property="og:description"
-      content="Hide the WhatsApp Web sidebar and chat list with one click or Alt+S. Free, open-source, zero permissions."
+      content="Hide the left sidebar and chat list in WhatsApp Web with one click or Alt+S. Keep one conversation full-width, reduce distractions, or hide your other chats before screen sharing."
     />
     <meta property="og:type" content="website" />
     <meta
@@ -30,7 +28,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Hide WhatsApp Web Sidebar - Free Chrome Extension"
+      content="WhatsApp Web Sidebar Toggle — Hide the Chat List"
     />
     <meta
       name="twitter:description"
@@ -62,13 +60,38 @@
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "WA Web Sidebar Toggle",
+        "name": "WhatsApp Web Sidebar Toggle",
+        "alternateName": "WA Web Sidebar Toggle",
         "applicationCategory": "BrowserApplication",
-        "operatingSystem": "Chrome",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "applicationSubCategory": "Chrome Extension",
+        "operatingSystem": "Chrome, Chromium, Microsoft Edge, Brave",
+        "browserRequirements": "Requires a Chromium-based browser (Chrome, Edge, Brave). Not compatible with the native WhatsApp Desktop app.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "isAccessibleForFree": true,
         "url": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle",
-        "description": "Hide the WhatsApp Web sidebar and chat list with one click or Alt+S.",
-        "softwareVersion": "0.2.5",
+        "downloadUrl": "https://chromewebstore.google.com/detail/kcecmmnkmpoeociooaffmimbpljdmglj",
+        "installUrl": "https://chromewebstore.google.com/detail/kcecmmnkmpoeociooaffmimbpljdmglj",
+        "softwareHelp": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle#faq",
+        "releaseNotes": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle#changelog",
+        "description": "Hide the left sidebar and chat list in WhatsApp Web with one click or Alt+S. Keep one conversation full-width, reduce distractions, or hide your other chats before screen sharing.",
+        "softwareVersion": "0.3.1",
+        "dateModified": "2026-07-20",
+        "permissions": "No special permissions requested. Runs only on web.whatsapp.com, makes no network requests, and reads no message content.",
+        "featureList": [
+          "One-click sidebar toggle",
+          "Alt+S keyboard shortcut",
+          "Works across Chats, Status, Communities, and Settings tabs",
+          "Smooth 400ms collapse/expand animation",
+          "Zero permissions beyond web.whatsapp.com",
+          "No analytics, telemetry, or network requests",
+          "Open source, MIT licensed"
+        ],
+        "inLanguage": ["en", "es", "fr", "de", "it", "ar", "ur"],
+        "keywords": "whatsapp web sidebar toggle, whatsapp web sidebar, whatsapp web hide sidebar, whatsapp web collapse sidebar, hide whatsapp web sidebar, collapse whatsapp web sidebar, whatsapp sidebar chrome, whatsapp web chrome extension, how to hide side bar in whatsapp web, whatsapp hide sidebar, toggle whatsapp, whatsapp web hide chat list, whatsapp web keyboard shortcut, whatsapp web privacy extension, whatsapp web screen share privacy, whatsapp web focus mode, whatsapp desktop hide sidebar, whatsapp web multilingual extension, whatsapp web extension all languages, whatsapp hide sidebar, whatsapp desktop hide sidebar, whatsapp web italian french spanish german arabic support, hide sidebar whatsapp web",
         "author": {
           "@type": "Person",
           "name": "Muhammad Aqib Bashir",
@@ -77,6 +100,11 @@
             "https://github.com/Muhammad-Aqib-Bashir",
             "https://www.upwork.com/freelancers/~muhammadaqibbashir"
           ]
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "Muhammad Aqib Bashir",
+          "url": "https://muhammadaqibbashir.netlify.app"
         }
       }
     </script>
@@ -126,6 +154,14 @@
               "@type": "Answer",
               "text": "Yes, Chats, Status, Communities, and Settings all behave the same way. Switching between them won't pop the sidebar back open."
             }
+          },
+          {
+            "@type": "Question",
+            "name": "how to hide side bar in whatsapp web?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "WhatsApp Web does not provide an obvious permanent “hide chat list” button in its standard interface, so this extension adds a dedicated toggle."
+            }
           }
         ]
       }
@@ -136,12 +172,30 @@
       {
         "@context": "https://schema.org",
         "@type": "VideoObject",
-        "name": "WA Web Sidebar Toggle demo",
-        "description": "Screen recording showing the WhatsApp Web sidebar being hidden and restored with one click.",
-        "thumbnailUrl": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle/icons/icon128.png",
-        "uploadDate": "2026-07-20",
+        "name": "How to hide the WhatsApp Web sidebar — WA Web Sidebar Toggle demo",
+        "description": "Screen recording of the WA Web Sidebar Toggle Chrome extension collapsing and restoring the WhatsApp Web sidebar with a single click, showing the chat list, unread counts, and contact names hidden instantly for distraction-free chatting or private screen sharing.",
+        "uploadDate": "2026-07-20T00:00:00+00:00",
         "contentUrl": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle/video-demo.mp4",
-        "duration": "PT3S"
+        "embedUrl": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle#install",
+        "duration": "PT3S",
+        "isFamilyFriendly": true,
+        "inLanguage": "en",
+        "transcript": "Silent screen recording, no dialogue. The presenter clicks the sidebar toggle button in WhatsApp Web's navigation rail; the chat list, contact names, and unread counts collapse instantly, expanding the active chat to fill the freed space. Clicking again restores the sidebar.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "WA Web Sidebar Toggle",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://muhammad-aqib-bashir.github.io/wa-web-sidebar-toggle/icons/icon128.png",
+            "width": 128,
+            "height": 128
+          }
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Muhammad Aqib Bashir",
+          "url": "https://muhammadaqibbashir.netlify.app"
+        }
       }
     </script>
 
@@ -1177,11 +1231,11 @@
     <section class="hero">
       <div class="hero-text">
         <p class="hero-eyebrow">Free Chrome Extension</p>
-        <h1>Hide the WhatsApp Web Sidebar.<br /><em>Focus on one chat.</em></h1>
+        <h1>WhatsApp Web Sidebar Toggle.<br /><em>Focus on one chat.</em></h1>
         <p class="hero-sub">
-          One button collapses the entire WhatsApp Web sidebar, chat list,
-          unread counts, contact names, so you can finish what you're doing
-          without your inbox competing for attention.
+          Hide the WhatsApp Web sidebar and chat list instantly. Free Chrome
+          extension with one-click and Alt+S toggle for focused chats, screen
+          sharing, and privacy. Open source, no tracking.
         </p>
         <div class="hero-actions">
           <a
@@ -1377,7 +1431,7 @@
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
           </div>
-          <h3>Zero permissions</h3>
+          <h3>Minimal permissions</h3>
           <p>
             Only requests access to web.whatsapp.com. Reads no messages. Talks
             to no servers. Nothing leaves your browser.
