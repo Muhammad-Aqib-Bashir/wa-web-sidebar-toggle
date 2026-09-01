@@ -4,6 +4,14 @@ All notable changes to this project will be documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] — 2026-09-01
+
+### Added
+
+- 6 more languages to the `I18N` dictionary — Albanian, Chinese (Hong Kong), Hausa, Irish,
+  Macedonian, and Uzbek — plus a `fil` alias for the existing Filipino/Tagalog translation,
+  bringing coverage to 72 languages (all languages in Meta's official WhatsApp language list)
+
 ## [0.3.1] — 2026-07-28
 
 ### Fixed

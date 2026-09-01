@@ -34,6 +34,7 @@
     ja: { toggle: "サイドバーを切り替え" }, // Japanese
     "zh-cn": { toggle: "切换侧边栏" }, // Chinese (Simplified)
     "zh-tw": { toggle: "切換側邊欄" }, // Chinese (Traditional)
+    "zh-hk": { toggle: "切換側邊欄" }, // Chinese (Hong Kong)
     ur: { toggle: "سائیڈ بار ٹوگل کریں" }, // Urdu
     fa: { toggle: "تغییر نوار کناری" }, // Farsi / Persian
     el: { toggle: "Εναλλαγή πλαϊνής γραμμής" }, // Greek
@@ -53,6 +54,7 @@
     ne: { toggle: "साइडबार टगल गर्नुहोस्" }, // Nepali
     ms: { toggle: "Togol bar sisi" }, // Malay
     tl: { toggle: "I-toggle ang side bar" }, // Filipino / Tagalog
+    fil: { toggle: "I-toggle ang side bar" }, // Filipino (alias of "tl" — WhatsApp uses either code)
     km: { toggle: "បិទ/បើក របារចំហៀង" }, // Khmer
     lo: { toggle: "ສະຫຼັບແຖບຂ້າງ" }, // Lao
     my: { toggle: "ဘေးဘား ပြောင်းရန်" }, // Burmese
@@ -81,6 +83,11 @@
     gl: { toggle: "Alternar a barra lateral" }, // Galician
     af: { toggle: "Wissel kantbalk" }, // Afrikaans
     zu: { toggle: "Guqula ibha yohlangothi" }, // Zulu
+    sq: { toggle: "Ndrysho shiritin anësor" }, // Albanian
+    ga: { toggle: "Scoránaigh an barra taoibh" }, // Irish
+    mk: { toggle: "Вклучи/исклучи странична лента" }, // Macedonian
+    uz: { toggle: "Yon panelni almashtirish" }, // Uzbek
+    ha: { toggle: "Canza menu na gefe" }, // Hausa
   };
 
   function getWALang() {
