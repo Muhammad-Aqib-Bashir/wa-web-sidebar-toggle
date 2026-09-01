@@ -11,6 +11,24 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - 6 more languages to the `I18N` dictionary — Albanian, Chinese (Hong Kong), Hausa, Irish,
   Macedonian, and Uzbek — plus a `fil` alias for the existing Filipino/Tagalog translation,
   bringing coverage to 72 languages (all languages in Meta's official WhatsApp language list)
+- CI now validates that every icon path in `manifest.json` actually exists on disk, and
+  runs `node --check` on `background.js`, `popup/popup.js`, and the release scripts (not
+  just `src/content.js`) — this would have caught the icon-path bug fixed below automatically
+
+### Fixed
+
+- `manifest.json` pointed the 32px and 64px icon slots at `icon128.png` instead of the
+  actual `icon32.png`/`icon64.png` files
+- `icons/iocn32.png` was a typo'd filename (fixed to `icon32.png`, referenced correctly
+  in the manifest)
+- The popup's LinkedIn social icon had `aria-label="GitHub profile"`, and the Freelancer
+  icon had `aria-label="X profile"` — both mismatched their actual link destinations,
+  which screen reader users would have heard incorrectly
+- `docs/index.html` (the public landing page) claimed "zero permissions" / "no special
+  permissions" in six places, despite the extension requesting the `storage` permission —
+  now accurately describes it as `storage` + `web.whatsapp.com` access only
+- `docs/index.html` also claimed the project was "MIT licensed" in four places; corrected
+  to GPL v3 to match the actual `LICENSE` file
 
 ## [0.3.1] — 2026-07-28
 
