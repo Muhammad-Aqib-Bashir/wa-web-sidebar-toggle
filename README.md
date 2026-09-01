@@ -179,14 +179,72 @@ language is different.
 <details>
 <summary><strong>66 supported languages</strong> (click to expand)</summary>
 
-English, Spanish, Portuguese, Italian, French, German, Dutch, Polish, Turkish, Russian,
-Arabic, Hindi, Indonesian, Vietnamese, Thai, Korean, Japanese, Chinese (Simplified &
-Traditional), Urdu, Farsi/Persian, Greek, Hungarian, Czech, Ukrainian, Hebrew, Bengali,
-Punjabi, Gujarati, Marathi, Tamil, Telugu, Kannada, Malayalam, Sinhala, Nepali, Malay,
-Filipino/Tagalog, Khmer, Lao, Burmese, Swahili, Amharic, Romanian, Bulgarian, Croatian,
-Serbian, Slovak, Slovenian, Swedish, Norwegian, Danish, Finnish, Estonian, Latvian,
-Lithuanian, Georgian, Armenian, Azerbaijani, Kazakh, Mongolian, Catalan, Basque, Galician,
-Afrikaans, Zulu.
+- Afrikaans
+- Amharic
+- Arabic
+- Armenian
+- Azerbaijani
+- Basque
+- Bengali
+- Bulgarian
+- Burmese
+- Catalan
+- Chinese (Simplified)
+- Chinese (Traditional)
+- Croatian
+- Czech
+- Danish
+- Dutch
+- English
+- Estonian
+- Farsi / Persian
+- Filipino / Tagalog
+- Finnish
+- French
+- Galician
+- Georgian
+- German
+- Greek
+- Gujarati
+- Hebrew
+- Hindi
+- Hungarian
+- Indonesian
+- Italian
+- Japanese
+- Kannada
+- Kazakh
+- Khmer
+- Korean
+- Lao
+- Latvian
+- Lithuanian
+- Malay
+- Malayalam
+- Marathi
+- Mongolian
+- Nepali
+- Norwegian
+- Polish
+- Portuguese
+- Punjabi
+- Romanian
+- Russian
+- Serbian
+- Sinhala
+- Slovak
+- Slovenian
+- Spanish
+- Swahili
+- Swedish
+- Tamil
+- Telugu
+- Thai
+- Turkish
+- Ukrainian
+- Urdu
+- Vietnamese
+- Zulu
 
 </details>
 
