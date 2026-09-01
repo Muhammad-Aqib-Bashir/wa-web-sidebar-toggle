@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="icons/icon128.png" alt="WA Web Sidebar Toggle logo" width="96" height="96" />
+
 # WA Web Sidebar Toggle
 
 **Hide WhatsApp Web's sidebar with one click. Focus on the chat, not the noise.**
