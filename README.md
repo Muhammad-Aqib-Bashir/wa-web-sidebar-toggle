@@ -34,7 +34,7 @@ conversation on screen.
 | ♿ **Accessible**            | Full ARIA support, keyboard focusable, visible focus ring             |
 | 🌗 **Theme aware**           | Matches WhatsApp Web's light and dark mode automatically              |
 | 🧩 **Feels native**          | Injects one button that matches WhatsApp Web's own design             |
-| 🌍 **66 languages**          | Tooltip follows _WhatsApp's_ language setting, not just the browser's |
+| 🌍 **72 languages**          | Tooltip follows _WhatsApp's_ language setting, not just the browser's |
 
 ---
 
@@ -177,76 +177,86 @@ WhatsApp itself is set to — so it matches what's actually on screen even if Ch
 language is different.
 
 <details>
-<summary><strong>66 supported languages</strong> (click to expand)</summary>
+<summary><strong>72 supported languages</strong> (click to expand)</summary>
 
-- Afrikaans
-- Amharic
-- Arabic
-- Armenian
-- Azerbaijani
-- Basque
-- Bengali
-- Bulgarian
-- Burmese
-- Catalan
-- Chinese (Simplified)
-- Chinese (Traditional)
-- Croatian
-- Czech
-- Danish
-- Dutch
-- English
-- Estonian
-- Farsi / Persian
-- Filipino / Tagalog
-- Finnish
-- French
-- Galician
-- Georgian
-- German
-- Greek
-- Gujarati
-- Hebrew
-- Hindi
-- Hungarian
-- Indonesian
-- Italian
-- Japanese
-- Kannada
-- Kazakh
-- Khmer
-- Korean
-- Lao
-- Latvian
-- Lithuanian
-- Malay
-- Malayalam
-- Marathi
-- Mongolian
-- Nepali
-- Norwegian
-- Polish
-- Portuguese
-- Punjabi
-- Romanian
-- Russian
-- Serbian
-- Sinhala
-- Slovak
-- Slovenian
-- Spanish
-- Swahili
-- Swedish
-- Tamil
-- Telugu
-- Thai
-- Turkish
-- Ukrainian
-- Urdu
-- Vietnamese
-- Zulu
+1. Afrikaans
+2. Albanian
+3. Amharic
+4. Arabic
+5. Armenian
+6. Azerbaijani
+7. Basque
+8. Bengali
+9. Bulgarian
+10. Burmese
+11. Catalan
+12. Chinese (Hong Kong)
+13. Chinese (Simplified)
+14. Chinese (Traditional)
+15. Croatian
+16. Czech
+17. Danish
+18. Dutch
+19. English
+20. Estonian
+21. Farsi / Persian
+22. Filipino / Tagalog
+23. Finnish
+24. French
+25. Galician
+26. Georgian
+27. German
+28. Greek
+29. Gujarati
+30. Hausa
+31. Hebrew
+32. Hindi
+33. Hungarian
+34. Indonesian
+35. Irish
+36. Italian
+37. Japanese
+38. Kannada
+39. Kazakh
+40. Khmer
+41. Korean
+42. Lao
+43. Latvian
+44. Lithuanian
+45. Macedonian
+46. Malay
+47. Malayalam
+48. Marathi
+49. Mongolian
+50. Nepali
+51. Norwegian
+52. Polish
+53. Portuguese
+54. Punjabi
+55. Romanian
+56. Russian
+57. Serbian
+58. Sinhala
+59. Slovak
+60. Slovenian
+61. Spanish
+62. Swahili
+63. Swedish
+64. Tamil
+65. Telugu
+66. Thai
+67. Turkish
+68. Ukrainian
+69. Urdu
+70. Uzbek
+71. Vietnamese
+72. Zulu
 
 </details>
+
+Regional variants Meta groups under these languages (e.g. `pt-br`/`pt-pt`, `es-mx`/`es-ar`,
+`en-gb`/`en-us`) aren't listed separately above — the extension automatically falls back from
+a full locale like `pt-br` to its base language (`pt`), so those are already covered.
 
 If a language isn't in the list yet, the tooltip falls back to English rather than showing
 blank or broken text. Adding a new one is a single line in the `I18N` object in
@@ -260,8 +270,9 @@ sv: { toggle: "Växla sidofält" }, // Swedish
 
 ## ⚠️ Known limitations
 
-- The `aria-label`/tooltip fall back to English for any WhatsApp language not yet in the
-  `I18N` dictionary above.
+- The 72 languages above match Meta's own list of WhatsApp-supported languages. If WhatsApp
+  adds a new language before this dictionary is updated, the `aria-label`/tooltip falls back
+  to English rather than showing blank or broken text — see [Contributing](#-contributing).
 
 ## 🤝 Contributing
 
