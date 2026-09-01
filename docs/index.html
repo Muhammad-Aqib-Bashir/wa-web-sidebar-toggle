@@ -32,7 +32,7 @@
     />
     <meta
       name="twitter:description"
-      content="Hide the WhatsApp Web sidebar with one click or Alt+S. Free Chrome extension, zero permissions, open source."
+      content="Hide the WhatsApp Web sidebar with one click or Alt+S. Free Chrome extension, minimal permissions, open source."
     />
     <meta
       name="twitter:image"
@@ -80,13 +80,13 @@
         "description": "Hide the left sidebar and chat list in WhatsApp Web with one click or Alt+S. Keep one conversation full-width, reduce distractions, or hide your other chats before screen sharing.",
         "softwareVersion": "0.3.1",
         "dateModified": "2026-07-20",
-        "permissions": "No special permissions requested. Runs only on web.whatsapp.com, makes no network requests, and reads no message content.",
+        "permissions": "Requests only the storage permission (to remember your sidebar preference) and access to web.whatsapp.com. Makes no network requests and reads no message content.",
         "featureList": [
           "One-click sidebar toggle",
           "Alt+S keyboard shortcut",
           "Works across Chats, Status, Communities, and Settings tabs",
           "Smooth 400ms collapse/expand animation",
-          "Zero permissions beyond web.whatsapp.com",
+          "Minimal permissions: storage + web.whatsapp.com only",
           "No analytics, telemetry, or network requests",
           "Open source, GPL v3 licensed"
         ],
@@ -144,7 +144,7 @@
             "name": "Does this extension read my WhatsApp messages?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. It requests no permissions beyond web.whatsapp.com, makes no network requests, and cannot read messages, contacts, or any WhatsApp content. The source code is open and GPL v3 licensed."
+              "text": "No. It requests only the storage permission and access to web.whatsapp.com, makes no network requests, and cannot read messages, contacts, or any WhatsApp content. The source code is open and GPL v3 licensed."
             }
           },
           {
@@ -1438,8 +1438,9 @@
           </div>
           <h3>Minimal permissions</h3>
           <p>
-            Only requests access to web.whatsapp.com. Reads no messages. Talks
-            to no servers. Nothing leaves your browser.
+            Only requests storage (to remember your preference) and access to
+            web.whatsapp.com. Reads no messages. Talks to no servers. Nothing
+            leaves your browser.
           </p>
         </div>
         <div class="feature-card">
@@ -1785,9 +1786,10 @@
         <div class="faq-item">
           <h3>Does this extension read my WhatsApp messages?</h3>
           <p>
-            No. It requests no permissions beyond web.whatsapp.com, makes no
-            network requests, and cannot read messages, contacts, or any
-            WhatsApp content. The source code is open and GPL v3 licensed.
+            No. It requests only the storage permission and access to
+            web.whatsapp.com, makes no network requests, and cannot read
+            messages, contacts, or any WhatsApp content. The source code is open
+            and GPL v3 licensed.
           </p>
         </div>
         <div class="faq-item">
