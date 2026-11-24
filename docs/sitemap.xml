@@ -1,8 +1,25 @@
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+  xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
 
   <url>
     <loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/</loc>
     <lastmod>2026-11-24T10:00:00+00:00</lastmod>
+
+    <image:image>
+      <image:loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/icons/icon128.png</image:loc>
+      <image:title>WhatsApp Web Sidebar Toggle Chrome Extension</image:title>
+    </image:image>
+
+    <video:video>
+      <!--
+      <video:thumbnail_loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/icons/icon128.png</video:thumbnail_loc> -->
+      <video:title>WhatsApp Web Sidebar Toggle Demo</video:title>
+      <video:description>See how the WhatsApp Web Sidebar Toggle Chrome Extension works.</video:description>
+      <video:content_loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/video-demo.mp4</video:content_loc>
+    </video:video>
+
   </url>
 
 </urlset>
