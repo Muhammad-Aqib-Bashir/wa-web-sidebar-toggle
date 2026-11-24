@@ -7,7 +7,7 @@
     GITHUB_REPO_URL:
       "https://github.com/Muhammad-Aqib-Bashir/wa-web-sidebar-toggle",
     BUY_ME_A_COFFEE_URL: "https://ko-fi.com/muhammadaqibbashir",
-    HIRE_URL: "https://www.freelancer.com/u/mAqibBashir",
+    HIRE_URL: "https://www.freelancer.com/hireme/mAqibBashir",
     SOCIAL_LINKS: {
       github: "https://github.com/Muhammad-Aqib-Bashir",
       linkedin: "https://linkedin.com/in/muhammadaqibbashir-dev",
