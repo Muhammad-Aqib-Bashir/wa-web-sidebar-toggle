@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
@@ -5,7 +6,7 @@
 
   <url>
     <loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/</loc>
-    <lastmod>2026-11-24T10:00:00+00:00</lastmod>
+    <lastmod>2026-11-27</lastmod>
 
     <image:image>
       <image:loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/icons/icon128.png</image:loc>
@@ -13,13 +14,17 @@
     </image:image>
 
     <video:video>
-      <!--
-      <video:thumbnail_loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/icons/icon128.png</video:thumbnail_loc> -->
+      <video:thumbnail_loc>
+        https://whatsapp-web-sidebar-toggle.kmapsolver.online/video-thumbnail-16x9.jpg</video:thumbnail_loc>
       <video:title>WhatsApp Web Sidebar Toggle Demo</video:title>
       <video:description>See how the WhatsApp Web Sidebar Toggle Chrome Extension works.</video:description>
       <video:content_loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/video-demo.mp4</video:content_loc>
     </video:video>
+  </url>
 
+  <url>
+    <loc>https://whatsapp-web-sidebar-toggle.kmapsolver.online/privacy-policy/</loc>
+    <lastmod>2026-11-27</lastmod>
   </url>
 
 </urlset>
